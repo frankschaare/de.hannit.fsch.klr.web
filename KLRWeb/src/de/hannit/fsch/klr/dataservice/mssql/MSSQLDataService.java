@@ -21,6 +21,8 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -45,6 +47,8 @@ import de.hannit.fsch.klr.model.team.TeamMitgliedschaft;
  * @author fsch
  *
  */
+@ManagedBean (name = "db", eager = true)
+@ApplicationScoped
 public class MSSQLDataService implements DataService 
 {
 private final static Logger log = Logger.getLogger(MSSQLDataService.class.getSimpleName());	
