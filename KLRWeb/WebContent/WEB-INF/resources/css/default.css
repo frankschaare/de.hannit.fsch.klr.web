@@ -1,0 +1,24 @@
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	color: #000000;
+	background-color: #ffffff;
+	margin: 0px;
+	padding: 0px;
+}
+
+.menu {
+
+}
+
+    .ui-layout-north {
+        z-index:20 !important;
+        overflow:visible !important;
+        padding: 0 !important;
+    }
+
+    .ui-layout-north .ui-layout-unit-content {
+        overflow:visible !important;
+    }
+
