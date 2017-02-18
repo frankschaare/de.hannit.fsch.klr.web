@@ -28,7 +28,7 @@ private ArrayList<Mitarbeiter> stellvertreter = new ArrayList<>();
 
 		try 
 		{
-		InputStream in = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("HannITProperties.xml");
+		InputStream in = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("HannITProperties.xml");			
 		props.loadFromXML(in);
 		
 		setPersonalNR(Integer.parseInt(props.getProperty("vorstandPNR")));

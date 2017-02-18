@@ -47,7 +47,7 @@ import de.hannit.fsch.klr.model.team.TeamMitgliedschaft;
  * @author fsch
  *
  */
-@ManagedBean (name = "db", eager = true)
+@ManagedBean (name = "dataService", eager = true)
 @ApplicationScoped
 public class MSSQLDataService implements DataService 
 {

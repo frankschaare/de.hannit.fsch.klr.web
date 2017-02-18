@@ -21,12 +21,20 @@
         <ui:include src="/WEB-INF/navigation/menu.xhtml" />
     </p:layoutUnit>
  
-    <p:layoutUnit position="west" size="200" header="Left" resizable="true" >
-        <h:outputText value="West unit content." />
+    <p:layoutUnit position="west" size="316" resizable="true" >
+    	<p:layout>
+		    <p:layoutUnit position="north">
+        		<ui:include src="/WEB-INF/navigation/treeNav.xhtml" />
+		    </p:layoutUnit>
+    	
+		    <p:layoutUnit position="center">
+        		<ui:include src="/WEB-INF/navigation/tree.xhtml" />
+		    </p:layoutUnit>
+        </p:layout>
     </p:layoutUnit>
  
     <p:layoutUnit position="center">
-        <p:outputLabel value="#{db.connectionInfo}"/>
+        <p:outputLabel value="#{dataService.connectionInfo}"/>
     </p:layoutUnit>
  
 </p:layout>
