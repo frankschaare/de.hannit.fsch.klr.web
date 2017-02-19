@@ -22,6 +22,7 @@ private	String kostenTraegerBezeichnung = null;
 private	int prozentAnteil = 0;
 private double prozentanteilGemeinkosten = 0;
 private double anteilGemeinkosten = 0;
+
 /*
  * Der Anteil des Vollzeitäquivalents je Kostenstelle / Kostenträger
  * Wird festegelegt, wenn in der Klasse Mitarbeiter das Vollzeitäquivalent feststeht.
@@ -43,7 +44,7 @@ private double bruttoAufwand = 0;
 	
 	public String getLabel() 
 	{
-	return getKostenstelleOderKostentraegerLang();
+	return getProzentanteil() + "% " + getKostenstelleOderKostentraegerLang();
 	}
 	
 	public double getAnteilGemeinkosten()

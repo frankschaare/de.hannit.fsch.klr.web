@@ -10,10 +10,25 @@
 <h:form>  
     <p:tabView>
         <p:tab title="Pnr">
-        	 <p:tree value="#{indexBean.root}" var="node" dynamic="true" styleClass="navTree">
-		        <p:treeNode>
+        	 <p:tree value="#{indexBean.root}" var="node" dynamic="true">
+		        <p:treeNode type="default" icon="treeNodeUserOK">
 		            <h:outputText value="#{node.label}" />
 		        </p:treeNode>
+		        <p:treeNode type="Altersteilzeit" icon="treeNodeAltersteilzeit">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="Azubi" icon="treeNodeAzubi">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="importiert" icon="treeNodeImportiert">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+   		        <p:treeNode type="error" icon="treeNodeError">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="AZV" icon="treeNodeAZV">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>		        
 		    </p:tree>
         </p:tab>
         <p:tab title="Name">

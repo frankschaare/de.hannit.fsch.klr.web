@@ -1,4 +1,4 @@
-package de.hannit.fschklr.web.beans;
+package de.hannit.fsch.klr.web.beans;
 
 import java.io.Serializable;
 import java.time.LocalDate;

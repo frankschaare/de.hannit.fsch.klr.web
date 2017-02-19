@@ -13,7 +13,7 @@
         <p:row>
             <p:column colspan="2"><p:commandButton value="#{ui['treeNavback']}"/></p:column>
             <p:column colspan="2">
-				<p:selectOneMenu id="selectOneMenuMonth" value="#{indexSelectOneController.selectedMonth}" valueChangeListener="#{indexSelectOneController.yearValueChanged}" immediate="true">
+				<p:selectOneMenu id="selectOneMenuMonth" value="#{indexSelectOneController.selectedMonth}" valueChangeListener="#{indexSelectOneController.yearValueChanged}">
             		<f:selectItem value="#{indexSelectOneController.maxMonth}" />
             		<f:selectItems value="#{indexSelectOneController.availableMonth}" />
         		</p:selectOneMenu>

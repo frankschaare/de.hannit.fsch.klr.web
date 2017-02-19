@@ -86,6 +86,19 @@ public class Constants
 	{
 	public static final String ERGEBNIS_IMPORT_DIR = "\\\\regionhannover.de\\daten\\hannit\\Rechnungswesen AöR\\KLR\\KLR ab 01.01.2011\\Auswertungen\\2013Q1\\CSV";
 	}
+
+	/**
+	 * Felder der AZV Daten
+	 */
+	public static interface TREETYPES 
+	{
+	public static final String TREETYPE_DEFAULT = "default";
+	public static final String TREETYPE_ALTERSTEILZEIT = "Altersteilzeit";
+	public static final String TREETYPE_AUSZUBILDENDER = "Azubi";
+	public static final String TREETYPE_AZV_NICHT_AKTUELL = "importiert";
+	public static final String TREETYPE_ERROR = "error";
+
+	}
 	
 	/**
 	 * Felder der AZV Daten

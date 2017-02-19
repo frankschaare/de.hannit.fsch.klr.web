@@ -1,4 +1,4 @@
-package de.hannit.fschklr.web.beans;
+package de.hannit.fsch.klr.web.beans;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
@@ -76,10 +76,10 @@ private double vzaeTotal = 0;
     	TreeNode azvNode = null;
 		for (Mitarbeiter m : hannit.getMitarbeiterNachPNR().values())
 		{
-		mNode  = new DefaultTreeNode(m, root);
+		mNode  = new DefaultTreeNode(m.getTyp(), m, root);
 			for (Arbeitszeitanteil	azv : m.getAzvMonat().values()) 
 			{
-			azvNode = new DefaultTreeNode(azv, mNode);	
+			azvNode = new DefaultTreeNode("AZV", azv, mNode);	
 			}
 			
 		}

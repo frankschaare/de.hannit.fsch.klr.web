@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TreeMap;
 
+import de.hannit.fsch.klr.model.Constants;
 import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
 import de.hannit.fsch.klr.model.team.TeamMitgliedschaft;
 
@@ -40,6 +41,11 @@ private ArrayList<Arbeitszeitanteil> arbeitszeitAnteile = null;
 private ArrayList<TeamMitgliedschaft> teamMitgliedschaften = null;
 private TreeMap<String, Arbeitszeitanteil> azvMonat = null;
 private boolean azvAktuell = true;
+
+/*
+ * Wird benutzt, um das passende Icon im Navigationsbaum anzuzeigen
+ */
+private String typ = Constants.TREETYPES.TREETYPE_DEFAULT;
 
 /**
  * Der Gesamtprozentanteil der gespeicherten Arbeitszeitanteile.
@@ -332,5 +338,40 @@ private int azvProzentSumme = 0;
 
 	public boolean isAzvAktuell(){return azvAktuell;}
 	public void setAzvAktuell(boolean azvAktuell){this.azvAktuell = azvAktuell;}
+
+	public void setTyp(String typ) {this.typ = typ;}
+	public String getTyp() 
+	{
+		switch (getStatus()) 
+		{
+		case STATUS_ALTERSTEILZEIT_ANGESTELLTE:
+		setTyp(Constants.TREETYPES.TREETYPE_ALTERSTEILZEIT);	
+		break;
+		case STATUS_ALTERSTEILZEIT_BEAMTE:
+		setTyp(Constants.TREETYPES.TREETYPE_ALTERSTEILZEIT);	
+		break;
+		case STATUS_AUSZUBILDENDER:
+		setTyp(Constants.TREETYPES.TREETYPE_AUSZUBILDENDER);	
+		break;
+
+		default:
+		typ = Constants.TREETYPES.TREETYPE_DEFAULT;
+		break;
+		}
+		
+		if (! isAzvAktuell()) 
+		{
+		typ = Constants.TREETYPES.TREETYPE_AZV_NICHT_AKTUELL;
+		}
+		
+		if (azvMonat == null || getAzvProzentSumme() != 100) 
+		{
+		typ = Constants.TREETYPES.TREETYPE_ERROR;	
+		}
+	return typ;
+	}
+
+	
+	
 	
 }
