@@ -134,6 +134,11 @@ private int azvProzentSumme = 0;
 	return letzteTeamNR;
 	}
 	
+	public String getLabel() 
+	{
+	return getNachname() + ", " + getVorname();
+	}
+	
 	public int getPersonalNR() {return personalNR;}
 	public void setPersonalNR(int personalNR) {this.personalNR = personalNR;}
 	public void setPersonalNRAsString(String personalNR){this.personalNR = Integer.parseInt(personalNR);}

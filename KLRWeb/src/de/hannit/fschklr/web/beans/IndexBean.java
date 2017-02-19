@@ -1,6 +1,8 @@
 package de.hannit.fschklr.web.beans;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,20 +13,26 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
+
 import de.hannit.fsch.common.MonatsSummen;
 import de.hannit.fsch.klr.dataservice.mssql.MSSQLDataService;
 import de.hannit.fsch.klr.model.Datumsformate;
+import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
 import de.hannit.fsch.klr.model.mitarbeiter.GemeinKosten;
 import de.hannit.fsch.klr.model.mitarbeiter.Mitarbeiter;
 import de.hannit.fsch.klr.model.mitarbeiter.PersonalDurchschnittsKosten;
 import de.hannit.fsch.klr.model.mitarbeiter.Tarifgruppe;
 import de.hannit.fsch.klr.model.mitarbeiter.Tarifgruppen;
 import de.hannit.fsch.klr.model.organisation.Organisation;
+import de.hannit.fsch.util.DateUtility;
 
 @ManagedBean
 @SessionScoped
-public class IndexBean 
+public class IndexBean implements Serializable
 {
+private static final long serialVersionUID = 4726044687673797206L;
 @ManagedProperty (value = "#{dataService}")
 private MSSQLDataService dataService;	
 private final static Logger log = Logger.getLogger(IndexBean.class.getSimpleName());	
@@ -33,6 +41,7 @@ private FacesContext fc = null;
 private Organisation hannit = null;
 private Tarifgruppen tarifgruppen = null;
 private MonatsSummen mSumme = null;
+private TreeNode root;
 
 /**
  * Wieviel Vollzeitanteile wurden aus den Tarifgruppen verteilt ?
@@ -50,8 +59,32 @@ private double vzaeTotal = 0;
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
 	hannit = new Organisation();
+	// TODO TESTDUMMY ENTFERNEN !!!
+	LocalDate testDummy = LocalDate.of(2015, 2, 1);
+	loadData(DateUtility.asDate(testDummy));
+	setTree();
 	}
 	
+	@SuppressWarnings("unused")
+	private void setTree() 
+	{
+    root = new DefaultTreeNode("Root", null);
+    	
+    	TreeNode mNode = null;
+    	TreeNode azvNode = null;
+		for (Mitarbeiter m : hannit.getMitarbeiterNachPNR().values())
+		{
+		mNode  = new DefaultTreeNode(m, root);
+			for (Arbeitszeitanteil	azv : m.getAzvMonat().values()) 
+			{
+			azvNode = new DefaultTreeNode(azv, mNode);	
+			}
+			
+		}
+	}
+	
+    public TreeNode getRoot() {return root;}	
+
 	/*
 	 * Lädt Daten aus der DB zur Weiterverwendung im CSVDetailspart.
 	 * Wird initial einmal und bei jeder Änderung der MonatsCombo aufgerufen.
@@ -186,6 +219,14 @@ private double vzaeTotal = 0;
 	
 	// tvPNR.setInput(hannit.getMitarbeiterNachPNR());
 	// tvNachname.setInput(hannit.getMitarbeiterNachName());
-	}		
+	}	
+	
+	public MSSQLDataService getDataService() {return dataService;}
+	public void setDataService(MSSQLDataService dataService) {this.dataService = dataService;}
+
+	public String getTest() 
+	{
+	return "Ole !";	
+	}
 
 }

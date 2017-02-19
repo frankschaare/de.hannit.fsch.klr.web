@@ -3,6 +3,7 @@
  */
 package de.hannit.fsch.klr.dataservice.mssql;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Date;
@@ -49,8 +50,9 @@ import de.hannit.fsch.klr.model.team.TeamMitgliedschaft;
  */
 @ManagedBean (name = "dataService", eager = true)
 @ApplicationScoped
-public class MSSQLDataService implements DataService 
+public class MSSQLDataService implements DataService, Serializable 
 {
+private static final long serialVersionUID = -764568972931562160L;
 private final static Logger log = Logger.getLogger(MSSQLDataService.class.getSimpleName());	
 private InitialContext ic;
 private DataSource ds = null;

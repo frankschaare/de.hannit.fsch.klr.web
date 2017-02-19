@@ -12,6 +12,16 @@ body {
 
 }
 
+.navTree {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	width: 98% !important;
+	height: 100% !important; 
+	min-height: 380px;
+	border: none !important;
+	margin-top: 0px;
+	}
+
     .ui-layout-north {
         z-index:20 !important;
         overflow:visible !important;

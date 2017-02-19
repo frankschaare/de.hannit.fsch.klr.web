@@ -41,6 +41,11 @@ private double bruttoAufwand = 0;
 	this.bruttoAufwand = incoming;
 	}
 	
+	public String getLabel() 
+	{
+	return getKostenstelleOderKostentraegerLang();
+	}
+	
 	public double getAnteilGemeinkosten()
 	{
 		return anteilGemeinkosten;
