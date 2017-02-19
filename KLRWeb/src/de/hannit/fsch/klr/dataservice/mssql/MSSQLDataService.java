@@ -14,6 +14,7 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -67,6 +68,9 @@ private Calendar cal = Calendar.getInstance();
 private DateFormat sqlServerDatumsFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
 private ArrayList<Mitarbeiter> mitarbeiter = null;	
+private ArrayList<LocalDate> azvBerichtsMonate = null;	
+private ArrayList<LocalDate> logaBerichtsMonate = null;	
+
 
 	/**
 	 * 
@@ -82,17 +86,37 @@ private ArrayList<Mitarbeiter> mitarbeiter = null;
 			
 			if (con != null) 
 			{
-			log.log(Level.INFO, "Verbindung zur KLR-Datenbank hergestellt");	
+			DatabaseMetaData dbmd = con.getMetaData();
+			this.info = "Benutzer " + dbmd.getUserName();
+			this.info += " verbunden mit " + dbmd.getDatabaseProductName() + " (" + dbmd.getDatabaseProductVersion() + ")";
+			this.info += " - " + dbmd.getDriverName() + " (" + dbmd.getDriverVersion() + ")";
+			
+			azvBerichtsMonate = new ArrayList<>();
+			ps = con.prepareStatement(PreparedStatements.SELECT_ARBEITSZEITANTEILE_BERICHTSMONATE);
+			rs = ps.executeQuery();
+			
+		      while (rs.next()) 
+		      {
+		      azvBerichtsMonate.add(rs.getDate(1).toLocalDate()); 	  
+		      }
+		    log.log(Level.INFO, "Verbindung zur KLR-Datenbank hergestellt. Es liegen AZV-Meldungen für " + azvBerichtsMonate.size() + " Berichtsmonate vor.");
+		    
+			logaBerichtsMonate = new ArrayList<>();
+			ps = con.prepareStatement(PreparedStatements.SELECT_LOGA_BERICHTSMONATE);
+			subSelect = ps.executeQuery();
+			
+			   while (subSelect.next()) 
+			   {
+			   logaBerichtsMonate.add(subSelect.getDate(1).toLocalDate()); 	  
+			   }		    
+		    log.log(Level.INFO, "Es liegen LoGa Daten für " + logaBerichtsMonate.size() + " Berichtsmonate vor.");
+		    
 			}
 			else
 			{
 			log.log(Level.WARNING, "Keine Verbindung zur KLR-Datenbank !");	
 			}	
 		
-	    DatabaseMetaData dbmd = con.getMetaData();
-	    this.info = "Benutzer " + dbmd.getUserName();
-	    this.info += " verbunden mit " + dbmd.getDatabaseProductName() + " (" + dbmd.getDatabaseProductVersion() + ")";
-	    this.info += " - " + dbmd.getDriverName() + " (" + dbmd.getDriverVersion() + ")";
 	    } 
 		catch (SQLException e) 
 		{
@@ -1718,6 +1742,10 @@ private ArrayList<Mitarbeiter> mitarbeiter = null;
 
 	public boolean isResult() {return result;}
 	public void setResult(boolean result) {this.result = result;}
+	public ArrayList<LocalDate> getAzvBerichtsMonate() {return azvBerichtsMonate;}
+	public ArrayList<LocalDate> getLogaBerichtsMonate() {return logaBerichtsMonate;}
+	
+	
 	
 }
 

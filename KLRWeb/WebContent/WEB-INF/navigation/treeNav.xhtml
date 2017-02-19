@@ -11,10 +11,20 @@
 	<p:panelGrid>
     <f:facet name="header">
         <p:row>
-            <p:column colspan="2"><p:commandButton value="&lt;&lt;"/></p:column>
-            <p:column colspan="2"><p:commandButton value="Monat"/></p:column>
-            <p:column colspan="2"><p:commandButton value="Jahr"/></p:column>
-            <p:column><p:commandButton value="&gt;&gt;"/></p:column>
+            <p:column colspan="2"><p:commandButton value="#{ui['treeNavback']}"/></p:column>
+            <p:column colspan="2">
+				<p:selectOneMenu id="selectOneMenuMonth" value="#{indexSelectOneController.selectedMonth}" valueChangeListener="#{indexSelectOneController.yearValueChanged}" immediate="true">
+            		<f:selectItem value="#{indexSelectOneController.maxMonth}" />
+            		<f:selectItems value="#{indexSelectOneController.availableMonth}" />
+        		</p:selectOneMenu>
+			</p:column>
+            <p:column colspan="2">
+				<p:selectOneMenu id="selectOneMenuYear" value="#{indexSelectOneController.selectedYear}">
+            		<f:selectItem value="#{indexSelectOneController.maxYear}" />
+            		<f:selectItems value="#{indexSelectOneController.availableYears}" />
+        		</p:selectOneMenu>
+			</p:column>
+            <p:column><p:commandButton value="#{ui['treeNavForward']}"/></p:column>
         </p:row>
      </f:facet>
 	 	

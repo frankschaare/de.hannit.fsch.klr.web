@@ -50,6 +50,7 @@ public static final String SELECT_TARIFGRUPPE_AUSHILFE = "SELECT Art FROM [dbo].
 public static final String INSERT_AZV = "INSERT INTO [dbo].[AZVMeldungen] ([ID], [Mitarbeiter_PNR],[TeamNR],[Berichtsmonat],[Kostenstelle],[Kostentraeger],[Prozentanteil]) VALUES (NEWID(),?, ?, ?, ?, ?, ?)";
 public static final String UPDATE_AZV = "UPDATE [dbo].[AZVMeldungen] SET [Kostenstelle] = ?, [Kostentraeger] = ?,[Prozentanteil] = ? WHERE [ID] = ?";
 public static final String SELECT_ARBEITSZEITANTEILE = "SELECT * FROM [dbo].[AZVMeldungen] WHERE Mitarbeiter_PNR = ?";
+public static final String SELECT_ARBEITSZEITANTEILE_BERICHTSMONATE = "SELECT Distinct [Berichtsmonat] FROM [dbo].[AZVMeldungen] ORDER BY Berichtsmonat";
 public static final String SELECT_ARBEITSZEITANTEILE_BERICHTSMONAT = "SELECT * FROM [dbo].[vwArbeitszeitanteile] WHERE Berichtsmonat = ?";
 public static final String DELETE_ARBEITSZEITANTEILE_BERICHTSMONAT = "DELETE FROM [dbo].[AZVMeldungen] WHERE Berichtsmonat = ?";
 public static final String SELECT_ARBEITSZEITANTEILE_LETZTERBERICHTSMONAT = "SELECT [Berichtsmonat], COUNT(*) AS Anzahl FROM [dbo].[AZVMeldungen] WHERE [Berichtsmonat] = (SELECT MAX([Berichtsmonat]) FROM [dbo].[AZVMeldungen]) GROUP BY [Berichtsmonat]";
@@ -69,6 +70,7 @@ public static final String SELECT_MONATSSUMMEN = "SELECT * FROM [dbo].[Monatssum
 public static final String INSERT_MONATSSUMMEN = "INSERT INTO [dbo].[MonatssummenAZV]([ID], [Kostenobjekt], [Berichtsmonat], [Summe]) VALUES (NEWID(), ?, ?, ?)";
 public static final String INSERT_MONATSSUMMENVZAE = "INSERT INTO [dbo].[MonatssummenVZAE] ([ID], [Berichtsmonat], [Tarifgruppe], [SummeTarifgruppe], [SummeStellen], [VZAE]) VALUES (NEWID(), ?, ?, ?, ?, ?)";
 
+public static final String SELECT_LOGA_BERICHTSMONATE = "SELECT Distinct [Berichtsmonat] FROM [dbo].[LoGa] ORDER BY Berichtsmonat";
 public static final String INSERT_LOGA = "INSERT INTO [dbo].[LoGa] ([Mitarbeiter_PNR], [Berichtsmonat], [Brutto], [Tarifgruppe], [Tarifstufe], [Stellenanteil]) VALUES (?, ?, ?, ?, ?, ?)";
 
 public static final String INSERT_CALLCENTERDATEN = "INSERT INTO [dbo].[CallcenterMonitoring] ([ID],[Datum],[ZeitVon],[ZeitBis],[EingehendeAnrufe],[ZugeordneteAnrufe],[AngenommeneAnrufe],[AnrufeInWarteschlange],[TrotzZuordnungAufgelegt],[InWarteschlangeAufgelegt],[DuschnittlicheWarteZeit],[DuschnittlicheWarteZeitSekunden]) VALUES (NEWID(),?,?,?,?,?,?,?,?,?,?,?)";

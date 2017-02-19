@@ -2,7 +2,6 @@ package de.hannit.fschklr.web.beans;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +33,9 @@ public class IndexBean implements Serializable
 {
 private static final long serialVersionUID = 4726044687673797206L;
 @ManagedProperty (value = "#{dataService}")
-private MSSQLDataService dataService;	
+private MSSQLDataService dataService;
+@ManagedProperty (value = "#{indexSelectOneController}")
+private IndexSelectOneController indexSelectOneController;
 private final static Logger log = Logger.getLogger(IndexBean.class.getSimpleName());	
 private String logPrefix = null;	
 private FacesContext fc = null;
@@ -42,6 +43,7 @@ private Organisation hannit = null;
 private Tarifgruppen tarifgruppen = null;
 private MonatsSummen mSumme = null;
 private TreeNode root;
+
 
 /**
  * Wieviel Vollzeitanteile wurden aus den Tarifgruppen verteilt ?
@@ -58,10 +60,10 @@ private double vzaeTotal = 0;
 	{
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
+	indexSelectOneController = indexSelectOneController != null ? indexSelectOneController : fc.getApplication().evaluateExpressionGet(fc, "#{indexSelectOneController}", IndexSelectOneController.class);
+
 	hannit = new Organisation();
-	// TODO TESTDUMMY ENTFERNEN !!!
-	LocalDate testDummy = LocalDate.of(2015, 2, 1);
-	loadData(DateUtility.asDate(testDummy));
+	loadData(DateUtility.asDate(indexSelectOneController.getMaxDate()));
 	setTree();
 	}
 	
@@ -223,6 +225,8 @@ private double vzaeTotal = 0;
 	
 	public MSSQLDataService getDataService() {return dataService;}
 	public void setDataService(MSSQLDataService dataService) {this.dataService = dataService;}
+	public IndexSelectOneController getIndexSelectOneController() {return indexSelectOneController;}
+	public void setIndexSelectOneController(IndexSelectOneController indexSelectOneController) {this.indexSelectOneController = indexSelectOneController;}
 
 	public String getTest() 
 	{
