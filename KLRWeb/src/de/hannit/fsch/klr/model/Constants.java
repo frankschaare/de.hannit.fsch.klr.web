@@ -97,6 +97,7 @@ public class Constants
 	public static final String TREETYPE_AUSZUBILDENDER = "Azubi";
 	public static final String TREETYPE_AZV_NICHT_AKTUELL = "importiert";
 	public static final String TREETYPE_ERROR = "error";
+	public static final String TREETYPE_DISABLED = "disabled";
 
 	}
 	

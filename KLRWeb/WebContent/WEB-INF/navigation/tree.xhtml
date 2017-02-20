@@ -9,7 +9,7 @@
 	
 <h:form>  
     <p:tabView>
-        <p:tab title="Pnr">
+        <p:tab title="#{ui['treeTabPNR']}">
         	 <p:tree value="#{indexBean.root}" var="node" dynamic="true">
 		        <p:treeNode type="default" icon="treeNodeUserOK">
 		            <h:outputText value="#{node.label}" />
@@ -22,6 +22,9 @@
 		        </p:treeNode>	
 		        <p:treeNode type="importiert" icon="treeNodeImportiert">
 		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>
+   		        <p:treeNode type="disabled" icon="treeNodeDisabled">
+		            <h:outputText value="#{node.label}" />
 		        </p:treeNode>	
    		        <p:treeNode type="error" icon="treeNodeError">
 		            <h:outputText value="#{node.label}" />
@@ -31,9 +34,9 @@
 		        </p:treeNode>		        
 		    </p:tree>
         </p:tab>
-        <p:tab title="Name">
+        <p:tab title="#{ui['treeTabName']}">
         </p:tab>
-        <p:tab title="Team">
+        <p:tab title="#{ui['treeTabTeam']}">
         </p:tab>
     </p:tabView>
 </h:form>

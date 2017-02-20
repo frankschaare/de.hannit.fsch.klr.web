@@ -364,10 +364,16 @@ private int azvProzentSumme = 0;
 		typ = Constants.TREETYPES.TREETYPE_AZV_NICHT_AKTUELL;
 		}
 		
-		if (azvMonat == null || getAzvProzentSumme() != 100) 
+		if (getAzvProzentSumme() != 100) 
 		{
 		typ = Constants.TREETYPES.TREETYPE_ERROR;	
 		}
+		
+		if (azvMonat == null) 
+		{
+		typ = Constants.TREETYPES.TREETYPE_DISABLED;	
+		}
+		 
 	return typ;
 	}
 
