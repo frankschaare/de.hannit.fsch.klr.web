@@ -3,6 +3,8 @@
  */
 package de.hannit.fsch.klr.model.kostenrechnung;
 
+import java.text.NumberFormat;
+
 /**
  * @author fsch
  *
@@ -55,7 +57,7 @@ private double verteilungKSTGesamt  = 0;
  */
 private double ergebnis  = 0;
 
-
+private String label = null;
 
 
 	/**
@@ -100,6 +102,11 @@ private double ergebnis  = 0;
 	public double getSummeGerundet()
 	{
 	return Math.rint( summe * 100 ) / 100.;
+	}
+
+	public String getFormattedSumme()
+	{
+	return NumberFormat.getCurrencyInstance().format((getSumme()));
 	}
 	
 	public double getSumme()
@@ -273,4 +280,12 @@ private double ergebnis  = 0;
 		this.aktiv = false;	
 		}
 	}
+
+	public String getLabel() 
+	{
+	this.label = getBeschreibung() != null ? getBezeichnung() + ": " + getBeschreibung() : getBezeichnung();	
+	return label;
+	}
+	
+	
 }

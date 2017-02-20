@@ -2,6 +2,7 @@ package de.hannit.fsch.klr.web.beans;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +20,7 @@ import de.hannit.fsch.common.MonatsSummen;
 import de.hannit.fsch.klr.dataservice.mssql.MSSQLDataService;
 import de.hannit.fsch.klr.model.Datumsformate;
 import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
+import de.hannit.fsch.klr.model.kostenrechnung.Kostenrechnungsobjekt;
 import de.hannit.fsch.klr.model.mitarbeiter.GemeinKosten;
 import de.hannit.fsch.klr.model.mitarbeiter.Mitarbeiter;
 import de.hannit.fsch.klr.model.mitarbeiter.PersonalDurchschnittsKosten;
@@ -228,9 +230,9 @@ private double vzaeTotal = 0;
 	public IndexSelectOneController getIndexSelectOneController() {return indexSelectOneController;}
 	public void setIndexSelectOneController(IndexSelectOneController indexSelectOneController) {this.indexSelectOneController = indexSelectOneController;}
 
-	public String getTest() 
+	public Collection<Kostenrechnungsobjekt> getMonatsGesamtSummen() 
 	{
-	return "Ole !";	
+	return mSumme.getGesamtKosten().values();	
 	}
 
 }

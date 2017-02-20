@@ -1,0 +1,64 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	
+	
+	<p:layout>
+ 
+ 	    <p:layoutUnit position="north">
+	        <p:outputLabel value="#{dataService.connectionInfo}"/>
+	    </p:layoutUnit>
+	    
+	    <p:layoutUnit position="center">
+	    
+		    <p:tabView>
+		        <p:tab title="Gesamt">
+			        <p:dataTable var="kto" value="#{indexBean.monatsGesamtSummen}">
+					    <p:column headerText="#{ui['gesamtTableColumn1']}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
+					        <h:outputText value="#{kto.label}" />
+					    </p:column>
+					 
+					    <p:column headerText="#{ui['gesamtTableColumn2']}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
+					        <h:outputText value="#{kto.formattedSumme}" />
+					    </p:column>
+					</p:dataTable>	
+		        </p:tab>
+		        <p:tab title="#{ui['treeTabName']}">
+		        </p:tab>
+		        <p:tab title="#{ui['treeTabTeam']}">
+		        </p:tab>
+	    	</p:tabView>
+	    
+	    </p:layoutUnit>
+	 
+	     <p:layoutUnit position="east" size="900" resizable="true" >
+			<p:dataTable var="car" value="">
+			    <f:facet name="header">
+					Vollzeitäquivalent			   
+				 </f:facet>
+			 
+			    <p:column headerText="#{ui['vzaeTableColumn1']}">
+			        <h:outputText value="1" />
+			    </p:column>
+			 
+			    <p:column headerText="#{ui['vzaeTableColumn2']}">
+			        <h:outputText value="2" />
+			    </p:column>
+			 
+			    <p:column headerText="#{ui['vzaeTableColumn3']}">
+			        <h:outputText value="3" />
+			    </p:column>
+			 
+			    <p:column headerText="#{ui['vzaeTableColumn4']}">
+			        <h:outputText value="4" />
+			    </p:column>
+			</p:dataTable>	
+	    </p:layoutUnit>
+ 
+	</p:layout>
+
+</ui:composition>
