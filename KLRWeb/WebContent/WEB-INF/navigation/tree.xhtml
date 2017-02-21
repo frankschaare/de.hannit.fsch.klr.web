@@ -35,8 +35,57 @@
 		    </p:tree>
         </p:tab>
         <p:tab title="#{ui['treeTabName']}">
+        	 <p:tree value="#{indexBean.treeName}" var="node" dynamic="true">
+		        <p:treeNode type="default" icon="treeNodeUserOK">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>
+		        <p:treeNode type="Altersteilzeit" icon="treeNodeAltersteilzeit">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="Azubi" icon="treeNodeAzubi">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="importiert" icon="treeNodeImportiert">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>
+   		        <p:treeNode type="disabled" icon="treeNodeDisabled">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+   		        <p:treeNode type="error" icon="treeNodeError">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="AZV" icon="treeNodeAZV">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>		        
+		    </p:tree>        
         </p:tab>
         <p:tab title="#{ui['treeTabTeam']}">
+        	 <p:tree value="#{indexBean.treeTeams}" var="node" dynamic="true">
+		        <p:treeNode type="Team" icon="treeNodeUserOK">
+		            <h:outputText value="#{node.teamBezeichnung}" />
+		        </p:treeNode>
+		        <p:treeNode type="default" icon="treeNodeUserOK">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>
+		        <p:treeNode type="Altersteilzeit" icon="treeNodeAltersteilzeit">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="Azubi" icon="treeNodeAzubi">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="importiert" icon="treeNodeImportiert">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>
+   		        <p:treeNode type="disabled" icon="treeNodeDisabled">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+   		        <p:treeNode type="error" icon="treeNodeError">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>	
+		        <p:treeNode type="AZV" icon="treeNodeAZV">
+		            <h:outputText value="#{node.label}" />
+		        </p:treeNode>		        
+		    </p:tree>          
         </p:tab>
     </p:tabView>
 </h:form>

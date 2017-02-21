@@ -24,22 +24,22 @@
 		    <p:tabView>
 		        <p:tab title="Gesamt (#{indexBean.tarifgruppen.formattedSummeTarifgruppen})">
 			        <p:dataTable var="kto" value="#{indexBean.monatsGesamtSummen}">
-					    <p:column headerText="#{ui['gesamtTableColumn1']}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
+					    <p:column headerText="#{ui['gesamtTableColumn1']}" sortBy="#{kto.label}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
 					        <h:outputText value="#{kto.label}" />
 					    </p:column>
 					 
-					    <p:column headerText="#{ui['gesamtTableColumn2']}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
+					    <p:column headerText="#{ui['gesamtTableColumn2']}" sortBy="#{kto.summe}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
 					        <h:outputText value="#{kto.formattedSumme}" />
 					    </p:column>
 					</p:dataTable>	
 		        </p:tab>
 		        <p:tab title="#{indexBean.monatsSummen.formattedKSTMonatssumme}">
 			        <p:dataTable var="kst" value="#{indexBean.gesamtSummenRowsKST}">
-					    <p:column headerText="#{ui['kstTableColumn1']}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
+					    <p:column headerText="#{ui['kstTableColumn1']}" sortBy="#{kst.label}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
 					        <h:outputText value="#{kst.label}" />
 					    </p:column>
 					 
-					    <p:column headerText="#{ui['gesamtTableColumn2']}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
+					    <p:column headerText="#{ui['gesamtTableColumn2']}" sortBy="#{kst.summe}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
 					        <h:outputText value="#{kst.formattedSumme}" />
 					    </p:column>
 					</p:dataTable>		        
@@ -47,11 +47,11 @@
 		        </p:tab>
 		        <p:tab title="#{indexBean.monatsSummen.formattedKTRMonatssumme}">
 			        <p:dataTable var="ktr" value="#{indexBean.gesamtSummenRowsKTR}">
-					    <p:column headerText="#{ui['ktrTableColumn1']}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
+					    <p:column headerText="#{ui['ktrTableColumn1']}" sortBy="#{ktr.label}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
 					        <h:outputText value="#{ktr.label}" />
 					    </p:column>
 					 
-					    <p:column headerText="#{ui['gesamtTableColumn2']}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
+					    <p:column headerText="#{ui['gesamtTableColumn2']}" sortBy="#{ktr.summe}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
 					        <h:outputText value="#{ktr.formattedSumme}" />
 					    </p:column>
 					</p:dataTable>		        

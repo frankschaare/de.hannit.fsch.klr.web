@@ -2,6 +2,7 @@ package de.hannit.fsch.klr.web.beans;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
@@ -10,8 +11,9 @@ import java.util.logging.Logger;
 import javax.faces.application.ProjectStage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.ListDataModel;
 
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -27,10 +29,11 @@ import de.hannit.fsch.klr.model.mitarbeiter.PersonalDurchschnittsKosten;
 import de.hannit.fsch.klr.model.mitarbeiter.Tarifgruppe;
 import de.hannit.fsch.klr.model.mitarbeiter.Tarifgruppen;
 import de.hannit.fsch.klr.model.organisation.Organisation;
+import de.hannit.fsch.klr.model.team.Team;
 import de.hannit.fsch.util.DateUtility;
 
 @ManagedBean
-@RequestScoped
+@SessionScoped
 public class IndexBean implements Serializable
 {
 private static final long serialVersionUID = 4726044687673797206L;
@@ -45,6 +48,13 @@ private Organisation hannit = null;
 private Tarifgruppen tarifgruppen = null;
 private MonatsSummen mSumme = null;
 private TreeNode root;
+private TreeNode treeName;
+private TreeNode treeTeams;
+private ListDataModel<Kostenrechnungsobjekt> gesamt = null;
+private ListDataModel<Kostenrechnungsobjekt> gesamtKTR = null;
+private ListDataModel<Kostenrechnungsobjekt> gesamtKST = null;
+
+
 
 
 /**
@@ -66,6 +76,10 @@ private double vzaeTotal = 0;
 
 	hannit = new Organisation();
 	loadData(DateUtility.asDate(indexSelectOneController.getMaxDate()));
+	gesamt = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKosten().values()));
+	gesamtKTR = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostentraeger().values()));
+	gesamtKST = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostenstellen().values()));
+
 	setTree();
 	}
 	
@@ -73,8 +87,11 @@ private double vzaeTotal = 0;
 	private void setTree() 
 	{
     root = new DefaultTreeNode("Root", null);
-    	
-    	TreeNode mNode = null;
+    treeName = new DefaultTreeNode("Root", null);
+    treeTeams = new DefaultTreeNode("Root", null);
+
+		TreeNode tNode = null;
+       	TreeNode mNode = null;
     	TreeNode azvNode = null;
 		for (Mitarbeiter m : hannit.getMitarbeiterNachPNR().values())
 		{
@@ -85,9 +102,39 @@ private double vzaeTotal = 0;
 			}
 			
 		}
+		
+    	mNode = null;
+    	azvNode = null;
+		for (Mitarbeiter m : hannit.getMitarbeiterNachName().values())
+		{
+		mNode  = new DefaultTreeNode(m.getTyp(), m, treeName);
+			for (Arbeitszeitanteil	azv : m.getAzvMonat().values()) 
+			{
+			azvNode = new DefaultTreeNode("AZV", azv, mNode);	
+			}
+			
+		}
+		
+    	mNode = null;
+    	azvNode = null;
+		for (Team t : hannit.getTeams().values())
+		{
+		tNode  = new DefaultTreeNode("Team", t, treeTeams);
+			for (Mitarbeiter m : t.getTeamMitglieder().values())
+			{
+			mNode  = new DefaultTreeNode(m.getTyp(), m, tNode);
+				for (Arbeitszeitanteil	azv : m.getAzvMonat().values()) 
+				{
+				azvNode = new DefaultTreeNode("AZV", azv, mNode);	
+				}
+			}
+		}		
 	}
 	
     public TreeNode getRoot() {return root;}	
+    public TreeNode getTreeName() {return treeName;}	
+    public TreeNode getTreeTeams() {return treeTeams;}	
+
 
 	/*
 	 * Lädt Daten aus der DB zur Weiterverwendung im CSVDetailspart.
@@ -230,19 +277,19 @@ private double vzaeTotal = 0;
 	public IndexSelectOneController getIndexSelectOneController() {return indexSelectOneController;}
 	public void setIndexSelectOneController(IndexSelectOneController indexSelectOneController) {this.indexSelectOneController = indexSelectOneController;}
 
-	public Collection<Kostenrechnungsobjekt> getMonatsGesamtSummen() 
+	public ListDataModel<Kostenrechnungsobjekt> getMonatsGesamtSummen() 
 	{
-	return mSumme.getGesamtKosten().values();	
+	return gesamt;		
 	}
 	
-	public Collection<Kostenrechnungsobjekt> getGesamtSummenRowsKST() 
+	public ListDataModel<Kostenrechnungsobjekt> getGesamtSummenRowsKST() 
 	{
-	return mSumme.getGesamtKostenstellen().values();	
+	return gesamtKST;	
 	}
 	
-	public Collection<Kostenrechnungsobjekt> getGesamtSummenRowsKTR() 
+	public ListDataModel<Kostenrechnungsobjekt> getGesamtSummenRowsKTR() 
 	{
-	return mSumme.getGesamtKostentraeger().values();	
+	return gesamtKTR;	
 	}	
 	
 	public MonatsSummen getMonatsSummen() {return mSumme;}
