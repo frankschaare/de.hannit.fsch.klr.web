@@ -3,6 +3,7 @@
  */
 package de.hannit.fsch.klr.model.mitarbeiter;
 
+import java.text.NumberFormat;
 import java.util.Date;
 
 /**
@@ -34,6 +35,11 @@ private double vollzeitAequivalent = 0;
 		
 	return vollzeitAequivalent;
 	}
+	
+	public String getFormattedVollzeitAequivalent()
+	{
+	return NumberFormat.getCurrencyInstance().format((getVollzeitAequivalent()));
+	}	
 
 	public String getTarifGruppe(){	return tarifGruppe;}
 
@@ -57,6 +63,11 @@ private double vollzeitAequivalent = 0;
 		return summeTarifgruppe;
 	}
 
+	public String getFormattedSummeTarifgruppe()
+	{
+	return NumberFormat.getCurrencyInstance().format((getSummeTarifgruppe()));
+	}
+	
 	public void setSummeTarifgruppe(double summeTarifgruppe)
 	{
 		this.summeTarifgruppe = summeTarifgruppe;

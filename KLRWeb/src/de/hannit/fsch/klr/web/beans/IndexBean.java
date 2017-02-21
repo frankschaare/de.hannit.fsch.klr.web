@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import javax.faces.application.ProjectStage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.model.DefaultTreeNode;
@@ -30,7 +30,7 @@ import de.hannit.fsch.klr.model.organisation.Organisation;
 import de.hannit.fsch.util.DateUtility;
 
 @ManagedBean
-@SessionScoped
+@RequestScoped
 public class IndexBean implements Serializable
 {
 private static final long serialVersionUID = 4726044687673797206L;
@@ -234,5 +234,17 @@ private double vzaeTotal = 0;
 	{
 	return mSumme.getGesamtKosten().values();	
 	}
+	
+	public Collection<Tarifgruppe> getTarifgruppenRows() 
+	{
+	return tarifgruppen.getTarifGruppen().values();	
+	}
+
+	public Tarifgruppen getTarifgruppen() 
+	{
+	return tarifgruppen;
+	}	
+	
+	
 
 }
