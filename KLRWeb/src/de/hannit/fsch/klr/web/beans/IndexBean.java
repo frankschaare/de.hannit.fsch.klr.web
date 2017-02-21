@@ -235,6 +235,18 @@ private double vzaeTotal = 0;
 	return mSumme.getGesamtKosten().values();	
 	}
 	
+	public Collection<Kostenrechnungsobjekt> getGesamtSummenRowsKST() 
+	{
+	return mSumme.getGesamtKostenstellen().values();	
+	}
+	
+	public Collection<Kostenrechnungsobjekt> getGesamtSummenRowsKTR() 
+	{
+	return mSumme.getGesamtKostentraeger().values();	
+	}	
+	
+	public MonatsSummen getMonatsSummen() {return mSumme;}
+
 	public Collection<Tarifgruppe> getTarifgruppenRows() 
 	{
 	return tarifgruppen.getTarifGruppen().values();	

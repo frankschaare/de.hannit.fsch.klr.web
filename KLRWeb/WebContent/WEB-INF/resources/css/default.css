@@ -12,6 +12,14 @@ body {
 
 }
 
+.summeOK {
+	color: rgb(0, 102, 0);
+}
+
+.summeError {
+	color: rgb(153, 0, 0);
+}
+
 .ui-tabs .ui-tabs-nav li a {
 	font-family: Verdana, Arial, Helvetica, sans-serif; 
 	font-weight: normal !important;  

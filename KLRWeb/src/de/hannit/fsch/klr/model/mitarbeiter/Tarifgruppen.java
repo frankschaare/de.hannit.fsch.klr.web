@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.TreeMap;
 
+import de.hannit.fsch.common.AppConstants;
 import de.hannit.fsch.klr.model.Datumsformate;
 
 public class Tarifgruppen 
@@ -49,7 +50,7 @@ private Date berichtsMonat = null;
 	
 	public String getFormattedSummeStellen()
 	{
-	return "Summe Stellen: " + String.valueOf(getSummeStellen());
+	return "Summe Stellen: " + AppConstants.KOMMAZAHL.format((getSummeStellen()));
 	}	
 	
 	public double getSummeVollzeitAequivalent()

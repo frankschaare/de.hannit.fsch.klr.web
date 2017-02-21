@@ -6,6 +6,8 @@ package de.hannit.fsch.klr.model.mitarbeiter;
 import java.text.NumberFormat;
 import java.util.Date;
 
+import de.hannit.fsch.common.AppConstants;
+
 /**
  * @author fsch
  *
@@ -76,6 +78,11 @@ private double vollzeitAequivalent = 0;
 	public double getSummeStellen()
 	{
 		return summeStellen;
+	}
+	
+	public String getFormattedSummeStellen()
+	{
+	return AppConstants.KOMMAZAHL.format((getSummeStellen()));
 	}
 
 	public void setSummeStellen(double summeStellen)

@@ -12,7 +12,7 @@
  	    <p:layoutUnit position="north">
 			<p:panelGrid columns="4" style="width: 55%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; padding: 4px 2px;">
 			    <h:outputText value="#{indexBean.tarifgruppen.formattedBerichtsMonat}" />
-			    <h:outputText value="Summe Brutto:  #{indexBean.tarifgruppen.formattedSummeTarifgruppen}" />
+			    <h:outputText value="Summe Brutto:  #{indexBean.tarifgruppen.formattedSummeTarifgruppen}" styleClass="#{indexBean.monatsSummen.summeOK ? 'summeOK' : 'summeError'}"/>
 			    <h:outputText value="#{indexBean.tarifgruppen.formattedSummeStellen}" />
 			    <h:outputText value="#{indexBean.tarifgruppen.formattedAnzahlMitarbeiter}" />
 			 
@@ -33,9 +33,28 @@
 					    </p:column>
 					</p:dataTable>	
 		        </p:tab>
-		        <p:tab title="#{ui['treeTabName']}">
+		        <p:tab title="#{indexBean.monatsSummen.formattedKSTMonatssumme}">
+			        <p:dataTable var="kst" value="#{indexBean.gesamtSummenRowsKST}">
+					    <p:column headerText="#{ui['kstTableColumn1']}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
+					        <h:outputText value="#{kst.label}" />
+					    </p:column>
+					 
+					    <p:column headerText="#{ui['gesamtTableColumn2']}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
+					        <h:outputText value="#{kst.formattedSumme}" />
+					    </p:column>
+					</p:dataTable>		        
+		        
 		        </p:tab>
-		        <p:tab title="#{ui['treeTabTeam']}">
+		        <p:tab title="#{indexBean.monatsSummen.formattedKTRMonatssumme}">
+			        <p:dataTable var="ktr" value="#{indexBean.gesamtSummenRowsKTR}">
+					    <p:column headerText="#{ui['ktrTableColumn1']}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
+					        <h:outputText value="#{ktr.label}" />
+					    </p:column>
+					 
+					    <p:column headerText="#{ui['gesamtTableColumn2']}" style="text-align: right; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 20px;">
+					        <h:outputText value="#{ktr.formattedSumme}" />
+					    </p:column>
+					</p:dataTable>		        
 		        </p:tab>
 	    	</p:tabView>
 	    
@@ -56,7 +75,7 @@
 			    </p:column>
 			 
 			    <p:column headerText="#{ui['vzaeTableColumn3']}" style="text-align: right; padding: 4px 60px;" >
-			        <h:outputText value="#{tarifgruppe.summeStellen}" />
+			        <h:outputText value="#{tarifgruppe.formattedSummeStellen}" />
 			    </p:column>
 			 
 			    <p:column headerText="#{ui['vzaeTableColumn4']}" style="text-align: right; padding: 4px 40px;">

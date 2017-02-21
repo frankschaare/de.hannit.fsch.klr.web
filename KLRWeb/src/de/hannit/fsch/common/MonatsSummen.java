@@ -3,6 +3,7 @@
  */
 package de.hannit.fsch.common;
 
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -110,7 +111,7 @@ private Date berichtsMonat = null;
 	/*
 	 * Stimmen die Monatssummen mit dem Gesamtbruttoaufwand überein ?
 	 */
-	public boolean isSummeOK() {return summeOK;}
+	public boolean getSummeOK() {return summeOK;}
 	public void setSummeOK(boolean summeOK) {this.summeOK = summeOK;}
 
 	public TreeMap<String, Kostenrechnungsobjekt> getGesamtKosten()	{return gesamtKosten;}
@@ -133,7 +134,7 @@ private Date berichtsMonat = null;
 	}
 
 	/*
-	 * Die Gesamtsumme alle gemeldeten Kostenstellen
+	 * Die Gesamtsumme aller gemeldeten Kostenstellen
 	 */
 	public double getKSTMonatssumme()
 	{
@@ -148,7 +149,15 @@ private Date berichtsMonat = null;
 	}
 	
 	/*
-	 * Die Gesamtsumme alle gemeldeten Kostenstellen
+	 * Formatierter String für Index.xhtml
+	 */
+	public String getFormattedKSTMonatssumme()
+	{
+	return "Kostenstellen (" + NumberFormat.getCurrencyInstance().format(getKSTMonatssumme()) + ")";
+	}	
+	
+	/*
+	 * Die Gesamtsumme aller gemeldeten Kostenträger
 	 */
 	public double getKTRMonatssumme()
 	{
@@ -161,4 +170,12 @@ private Date berichtsMonat = null;
 
 	return result;
 	}
+	
+	/*
+	 * Formatierter String für Index.xhtml
+	 */
+	public String getFormattedKTRMonatssumme()
+	{
+	return "Kostenträger (" + NumberFormat.getCurrencyInstance().format(getKTRMonatssumme()) + ")";
+	}		
 }
