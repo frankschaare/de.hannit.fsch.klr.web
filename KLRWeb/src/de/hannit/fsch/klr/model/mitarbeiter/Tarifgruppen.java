@@ -41,6 +41,7 @@ private Date berichtsMonat = null;
 	
 	public double getSummeStellen()
 	{
+	summeStellen = 0;	
 		for (Tarifgruppe t : getTarifGruppen().values())
 		{
 		summeStellen = summeStellen + t.getSummeStellen();	

@@ -47,11 +47,4 @@ public static final String MONATSBERICHT = "MONATSBERICHT";
 public static final String PART_GEMEINKOSTEN = "de.hannit.fsch.rcp.klr.partdescriptor.csv.gemeinkosten";
 }
 
-public static interface PartIDs
-{
-public static final String NAVPART = "de.hannit.fsch.rcp.klr.parts.NavPart";	
-public static final String CSV01 = "de.hannit.fsch.rcp.klr.partdescriptor.csv.csv01";
-public static final String AZVPART = "de.hannit.fsch.rcp.klr.partdescriptor.azv";
-public static final String AZVWEBSERVICEPART = "de.hannit.fsch.rcp.klr.partdescriptor.azv.webservice";
-}
 }

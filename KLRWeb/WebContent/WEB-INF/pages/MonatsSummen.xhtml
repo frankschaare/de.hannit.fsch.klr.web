@@ -10,7 +10,7 @@
 	<p:layout>
  
  	    <p:layoutUnit position="north">
-			<p:panelGrid columns="4" style="width: 55%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; padding: 4px 2px;">
+			<p:panelGrid id="infoGrid" columns="4" styleClass="infoGrid">
 			    <h:outputText value="#{indexBean.tarifgruppen.formattedBerichtsMonat}" />
 			    <h:outputText value="Summe Brutto:  #{indexBean.tarifgruppen.formattedSummeTarifgruppen}" styleClass="#{indexBean.monatsSummen.summeOK ? 'summeOK' : 'summeError'}"/>
 			    <h:outputText value="#{indexBean.tarifgruppen.formattedSummeStellen}" />
@@ -21,7 +21,7 @@
 	    
 	    <p:layoutUnit position="center">
 	    
-		    <p:tabView>
+		    <p:tabView id="tabViewKSTKTR">
 		        <p:tab title="Gesamt (#{indexBean.tarifgruppen.formattedSummeTarifgruppen})">
 			        <p:dataTable var="kto" value="#{indexBean.monatsGesamtSummen}">
 					    <p:column headerText="#{ui['gesamtTableColumn1']}" sortBy="#{kto.label}" style="text-align: left; width: 80%; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; padding: 4px 2px;">
@@ -61,20 +61,20 @@
 	    </p:layoutUnit>
 	 
 	     <p:layoutUnit position="east" size="42%" resizable="true" >
-			<p:dataTable var="tarifgruppe" value="#{indexBean.tarifgruppenRows}">
+			<p:dataTable id="dataTableTarifgruppen" var="tarifgruppe" value="#{indexBean.tarifgruppenRows}">
 			    <f:facet name="header">
-					Vollzeitäquivalent			   
+					<h:outputText value="#{indexBean.labelVZAE}" />				   
 				 </f:facet>
 			 
-			    <p:column headerText="#{ui['vzaeTableColumn1']}" style="text-align: right; padding: 4px 40px;">
+			    <p:column headerText="#{ui['vzaeTableColumn1']}" sortBy="#{tarifgruppe.tarifGruppe}" style="text-align: right; padding: 4px 40px;">
 			        <h:outputText value="#{tarifgruppe.tarifGruppe}" />
 			    </p:column>
 			 
-			    <p:column headerText="#{ui['vzaeTableColumn2']}" style="text-align: right; padding: 4px 40px;" >
+			    <p:column headerText="#{ui['vzaeTableColumn2']}" sortBy="#{tarifgruppe.summeTarifgruppe}" style="text-align: right; padding: 4px 40px;" >
 			        <h:outputText value="#{tarifgruppe.formattedSummeTarifgruppe}" />
 			    </p:column>
 			 
-			    <p:column headerText="#{ui['vzaeTableColumn3']}" style="text-align: right; padding: 4px 60px;" >
+			    <p:column headerText="#{ui['vzaeTableColumn3']}" sortBy="#{tarifgruppe.summeStellen}" style="text-align: right; padding: 4px 60px;" >
 			        <h:outputText value="#{tarifgruppe.formattedSummeStellen}" />
 			    </p:column>
 			 
@@ -82,8 +82,9 @@
 			        <h:outputText value="#{tarifgruppe.formattedVollzeitAequivalent}" />
 			    </p:column>
 			</p:dataTable>	
+		<p:messages showDetail="true" autoUpdate="true"/>	
 	    </p:layoutUnit>
- 
+
 	</p:layout>
 
 </ui:composition>

@@ -8,9 +8,15 @@ body {
 	padding: 0px;
 }
 
-.menu {
-
+.infoGrid {
+	width: 55%; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-weight: bold; 
+	padding: 4px 2px;
+	border-collapse: separate !important;
 }
+
+
 
 .summeOK {
 	color: rgb(0, 102, 0);
@@ -25,6 +31,10 @@ body {
 	font-weight: normal !important;  
 	padding: 3px !important;
  }
+ 
+.ui-panelgrid .ui-panelgrid-cell {
+    border: none !important;
+} 
 
 .navTree {
 	font-family: Verdana, Arial, Helvetica, sans-serif;

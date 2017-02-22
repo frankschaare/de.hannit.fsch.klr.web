@@ -3,16 +3,17 @@ package de.hannit.fsch.klr.web.beans;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.application.ProjectStage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
 import org.primefaces.model.DefaultTreeNode;
@@ -44,6 +45,8 @@ private IndexSelectOneController indexSelectOneController;
 private final static Logger log = Logger.getLogger(IndexBean.class.getSimpleName());	
 private String logPrefix = null;	
 private FacesContext fc = null;
+private FacesMessage msg = null;
+private String detail = null;
 private Organisation hannit = null;
 private Tarifgruppen tarifgruppen = null;
 private MonatsSummen mSumme = null;
@@ -53,8 +56,7 @@ private TreeNode treeTeams;
 private ListDataModel<Kostenrechnungsobjekt> gesamt = null;
 private ListDataModel<Kostenrechnungsobjekt> gesamtKTR = null;
 private ListDataModel<Kostenrechnungsobjekt> gesamtKST = null;
-
-
+private ListDataModel<Tarifgruppe> tarifgruppenListe = null;
 
 
 /**
@@ -79,6 +81,7 @@ private double vzaeTotal = 0;
 	gesamt = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKosten().values()));
 	gesamtKTR = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostentraeger().values()));
 	gesamtKST = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostenstellen().values()));
+	tarifgruppenListe = new ListDataModel<Tarifgruppe>(new ArrayList<Tarifgruppe>(tarifgruppen.getTarifGruppen().values()));
 
 	setTree();
 	}
@@ -136,12 +139,31 @@ private double vzaeTotal = 0;
     public TreeNode getTreeTeams() {return treeTeams;}	
 
 
+    public void buttonBackAction(ActionEvent actionEvent) 
+    {	
+   	logPrefix = this.getClass().getName() + ".buttonBackAction(ActionEvent actionEvent): ";
+     	
+    indexSelectOneController.setAuswertungsMonat(indexSelectOneController.getAuswertungsMonat().minusMonths(1));
+    if (FacesContext.getCurrentInstance().isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Fordere Mitarbeiterliste und AZV-Daten für den Monat " + DateUtility.DF_MONATJAHR.format(indexSelectOneController.getAuswertungsMonat()) + " vom DataService an.");}	
+    loadData(DateUtility.asDate(indexSelectOneController.getAuswertungsMonat()));
+    }
+    
+    public void buttonForwardAction(ActionEvent actionEvent) 
+    {	
+   	logPrefix = this.getClass().getName() + ".buttonForwardAction(ActionEvent actionEvent): ";
+     	
+    indexSelectOneController.setAuswertungsMonat(indexSelectOneController.getAuswertungsMonat().plusMonths(1));
+    if (FacesContext.getCurrentInstance().isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Fordere Mitarbeiterliste und AZV-Daten für den Monat " + DateUtility.DF_MONATJAHR.format(indexSelectOneController.getAuswertungsMonat()) + " vom DataService an.");}	
+    loadData(DateUtility.asDate(indexSelectOneController.getAuswertungsMonat()));
+    }
+
 	/*
 	 * Lädt Daten aus der DB zur Weiterverwendung im CSVDetailspart.
 	 * Wird initial einmal und bei jeder Änderung der MonatsCombo aufgerufen.
 	 */
 	public void loadData(Date selectedMonth)
 	{
+	fc = FacesContext.getCurrentInstance();	
 	logPrefix = this.getClass().getName() + ".loadData(): ";
 	
 	if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Fordere Mitarbeiterliste und AZV-Daten für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + " vom DataService an.");}	
@@ -239,7 +261,10 @@ private double vzaeTotal = 0;
 		pdk.setDatenOK(true);
 		gk.setChecked(true);
 		gk.setDatenOK(true);
-		if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + " wurden insgesamt " + NumberFormat.getCurrencyInstance().format(monatssummenTotal) + " auf " + mSumme.getGesamtKosten().size() + " Kostenstellen / Kostenträger verteilt.");}	
+		if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + " wurden insgesamt " + NumberFormat.getCurrencyInstance().format(monatssummenTotal) + " auf " + mSumme.getGesamtKosten().size() + " Kostenstellen / Kostenträger verteilt.");}
+		detail = "Für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + " wurden insgesamt " + NumberFormat.getCurrencyInstance().format(vzaeVerteilt) + " auf " + mSumme.getGesamtKosten().size() + " Kostenstellen / Kostenträger verteilt. Das entspricht der Summe der Personalaufwendungen i.H.v. " + NumberFormat.getCurrencyInstance().format(monatssummenTotal); 
+		msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Monatssummen erfolgreich geprüft.", detail);
+		fc.addMessage(null, msg);
 		}
 		else
 		{
@@ -249,27 +274,18 @@ private double vzaeTotal = 0;
 		pdk.setDatenOK(false);
 		gk.setChecked(true);
 		gk.setDatenOK(false);
-		log.log(Level.SEVERE, logPrefix + "Für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + " wurden insgesamt " + NumberFormat.getCurrencyInstance().format(monatssummenTotal) + " auf " + mSumme.getGesamtKosten().size() + " Kostenstellen / Kostenträger verteilt.");		
+		detail = "Für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + " wurden insgesamt " + NumberFormat.getCurrencyInstance().format(vzaeVerteilt) + " auf " + mSumme.getGesamtKosten().size() + " Kostenstellen / Kostenträger verteilt. Die Summe der Personalaufwendungen beträgt aber " + NumberFormat.getCurrencyInstance().format(monatssummenTotal); 
+		log.log(Level.SEVERE, logPrefix + detail);		
+		msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Monatssummen sind fehlerhaft !", detail);
+		fc.addMessage(null, msg);
 		}	
 		
-	/*
-	 * Nach Abschluss aller Prüfungen werden die Monatssummen versendet:	
-	 */
-	// TODO: Broker Action geht nicht mehr	
-	// log.info("Eventbroker versendet Monatssummen für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + ", Topic: Topics.MONATSSUMMEN", plugin);
-	// broker.send(Topics.MONATSSUMMEN, mSumme);
-		// Speichert die Monatssummen zur initialen Verwendung im CSVDetailsPart im Applikationscontext ab:
-	//	if (application != null)
-	//	{
-	//	context = application.getContext();
-	//	context.set(AppConstants.CONTEXT_MONATSSUMMEN, mSumme);
-	//	log.info("Tarifgruppen für den Monat " + Datumsformate.MONATLANG_JAHR.format(selectedMonth) + ", wurden im Applikationskontext gespeichert.", plugin);
-	//	}
-	// broker.send(Topics.PERSONALDURCHSCHNITTSKOSTEN, pdk);
-	// broker.send(Topics.GEMEINKOSTERKOSTEN, gk);
-	
-	// tvPNR.setInput(hannit.getMitarbeiterNachPNR());
-	// tvNachname.setInput(hannit.getMitarbeiterNachName());
+	gesamt = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKosten().values()));
+	gesamtKTR = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostentraeger().values()));
+	gesamtKST = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostenstellen().values()));
+	tarifgruppenListe = new ListDataModel<Tarifgruppe>(new ArrayList<Tarifgruppe>(tarifgruppen.getTarifGruppen().values()));
+
+	setTree();
 	}	
 	
 	public MSSQLDataService getDataService() {return dataService;}
@@ -294,16 +310,19 @@ private double vzaeTotal = 0;
 	
 	public MonatsSummen getMonatsSummen() {return mSumme;}
 
-	public Collection<Tarifgruppe> getTarifgruppenRows() 
+	public ListDataModel<Tarifgruppe> getTarifgruppenRows() 
 	{
-	return tarifgruppen.getTarifGruppen().values();	
+	return tarifgruppenListe;	
 	}
 
+	public String getLabelVZAE() 
+	{
+	return "Vollzeitäquivalent für Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(DateUtility.asLocalDate(tarifgruppen.getBerichtsMonat()));
+	}
+	
 	public Tarifgruppen getTarifgruppen() 
 	{
 	return tarifgruppen;
-	}	
-	
-	
+	}
 
 }

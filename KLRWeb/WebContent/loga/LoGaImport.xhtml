@@ -17,26 +17,30 @@
 </h:head>
 <h:body>
 
-	<p:layout id="indexLayout" fullPage="true">
+    <p:growl id="messages" showDetail="true" />
+	<p:layout id="logaLayoutMenu" fullPage="true">
  
 	    <p:layoutUnit position="north" size="45" resizable="true" styleClass="menu">
 	        <ui:include src="/WEB-INF/navigation/menu.xhtml" />
 	    </p:layoutUnit>
 	 
-	    <p:layoutUnit id="navigationTree" position="west" size="390" resizable="true" >
-	    	<p:layout>
-			    <p:layoutUnit position="north">
-	        		<ui:include src="/WEB-INF/navigation/treeNav.xhtml" />
+
+	    <p:layoutUnit id="detailsLoGa" position="center">
+	    
+	    	<p:layout id="logaImportLayoutDetails">
+ 
+			    <p:layoutUnit position="west" size="300" resizable="true" styleClass="menu">
+					<h:form enctype="multipart/form-data">
+	    				<p:fileUpload value="#{loGaImport.file}" mode="simple"/>
+	    				<p:commandButton value="Submit" ajax="false" actionListener="#{loGaImport.upload}" disabled="false" />
+					</h:form>
 			    </p:layoutUnit>
-	    	
-			    <p:layoutUnit position="center">
-	        		<ui:include src="/WEB-INF/navigation/tree.xhtml" />
-			    </p:layoutUnit>
-	        </p:layout>
-	    </p:layoutUnit>
 	 
-	    <p:layoutUnit id="detailsView" position="center">
-	        <ui:include src="/WEB-INF/pages/MonatsSummen.xhtml" />
+
+		    <p:layoutUnit id="logaImportLayoutDetailsCenter" position="center">
+		    </p:layoutUnit>
+ 
+			</p:layout>
 	    </p:layoutUnit>
  
 	</p:layout>

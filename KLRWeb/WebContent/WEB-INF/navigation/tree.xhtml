@@ -9,7 +9,7 @@
 	
 <h:form>  
     <p:tabView>
-        <p:tab title="#{ui['treeTabPNR']}">
+        <p:tab id="tabTreePNR" title="#{ui['treeTabPNR']}">
         	 <p:tree value="#{indexBean.root}" var="node" dynamic="true">
 		        <p:treeNode type="default" icon="treeNodeUserOK">
 		            <h:outputText value="#{node.label}" />

@@ -8,7 +8,7 @@
 	
 	
 <h:form>  
-    <p:growl id="messages"/>
+    <p:growl id="messages" showDetail="true" />
  
     <p:menubar>
         <p:submenu label="#{ui['submenuFile']}" icon="fa fa-file">
@@ -16,7 +16,7 @@
                 <p:menuitem value="Project" url="#" />
                 <p:menuitem value="Other" url="#" />
             </p:submenu>
-            <p:menuitem value="Open" url="#" />
+            <p:menuitem value="LoGa Import" action="/loga/LoGaImport.xhtml" icon="fa fa-upload"/>
             <p:separator />
             <p:menuitem value="Quit" url="#" />
         </p:submenu>

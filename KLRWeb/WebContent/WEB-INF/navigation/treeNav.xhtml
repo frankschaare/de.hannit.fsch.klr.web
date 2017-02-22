@@ -8,28 +8,28 @@
 	
 	
 <h:form>  
-	<p:panelGrid>
+	<p:panelGrid id="gridTreeNavigation" style="width: 100%; border:none;">
     <f:facet name="header">
         <p:row>
-            <p:column colspan="2"><p:commandButton value="#{ui['treeNavback']}"/></p:column>
             <p:column colspan="2">
-				<p:selectOneMenu id="selectOneMenuMonth" value="#{indexSelectOneController.selectedMonth}" valueChangeListener="#{indexSelectOneController.yearValueChanged}">
-            		<f:selectItem value="#{indexSelectOneController.maxMonth}" />
-            		<f:selectItems value="#{indexSelectOneController.availableMonth}" />
-        		</p:selectOneMenu>
+            	<p:commandButton id="btnBack" value="#{ui['treeNavback']}" actionListener="#{indexBean.buttonBackAction}" update="@(form), tabViewKSTKTR, infoGrid, dataTableTarifgruppen" process="@this"/>
+            </p:column>
+            <p:column colspan="2">
+                <h:outputText value="#{indexSelectOneController.selectedMonth}" />
 			</p:column>
             <p:column colspan="2">
-				<p:selectOneMenu id="selectOneMenuYear" value="#{indexSelectOneController.selectedYear}">
-            		<f:selectItem value="#{indexSelectOneController.maxYear}" />
-            		<f:selectItems value="#{indexSelectOneController.availableYears}" />
-        		</p:selectOneMenu>
+                <h:outputText value="#{indexSelectOneController.selectedYear}" />
 			</p:column>
-            <p:column><p:commandButton value="#{ui['treeNavForward']}"/></p:column>
+            <p:column>
+            	<p:commandButton id="btnForward" value="#{ui['treeNavForward']}" disabled="#{indexSelectOneController.buttonForwardDisabled}" actionListener="#{indexBean.buttonForwardAction}" update="@(form), tabViewKSTKTR, infoGrid, dataTableTarifgruppen"/>
+            </p:column>
         </p:row>
      </f:facet>
 	 	
 
 	</p:panelGrid>
+	<p:tooltip id="btnBackToolTip" for="btnBack" value="#{indexSelectOneController.buttonBackToolTip}" position="top"/>
+	<p:tooltip id="btnForwardToolTip" for="btnForward" value="#{indexSelectOneController.buttonForwardToolTip}" position="top"/>
 </h:form>
 
 </ui:composition>
