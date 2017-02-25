@@ -22,9 +22,14 @@ private	int Tarifstufe = 0;
 private	double stellenAnteil = 0;
 private String source = null;
 private boolean exists = false;
+private boolean warnings = false;
+private boolean errors = false;
+
 private boolean mitarbeiterChecked = false;
 
 private Calendar cal = Calendar.getInstance();
+private int lineNumber;
+private String rowStyle = null;
 	/**
 	 * 
 	 */
@@ -145,5 +150,32 @@ private Calendar cal = Calendar.getInstance();
 	public void setMitarbeiterChecked(boolean checked)
 	{
 	this.mitarbeiterChecked = checked;	
+	}
+	
+	public String getRowStyle() 
+	{
+		if (errors) 
+		{
+		rowStyle = "rowStyleRed";	
+		} 
+		else 
+		{
+		rowStyle = warnings ? "rowStyleOrange" : rowStyle;	
+		}
+	return rowStyle;
+	}
+	
+	public void setRowStyle(String rowStyle) {this.rowStyle = rowStyle;}
+	public boolean getWarnings() {return warnings;}
+	public void setWarnings(boolean warnings) {this.warnings = warnings;}
+	public boolean getErrors() {return errors;}
+	public void setErrors(boolean errors) {this.errors = errors;}
+
+	public int getLineNumber() {return lineNumber;}
+
+	public void setLineNumber(int lineCount) 
+	{
+	this.lineNumber = lineCount;
+		
 	}
 }

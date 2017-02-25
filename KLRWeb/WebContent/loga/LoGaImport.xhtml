@@ -17,7 +17,6 @@
 </h:head>
 <h:body>
 
-    <p:growl id="messages" showDetail="true" />
 	<p:layout id="logaLayoutMenu" fullPage="true">
  
 	    <p:layoutUnit position="north" size="45" resizable="true" styleClass="menu">
@@ -29,15 +28,50 @@
 	    
 	    	<p:layout id="logaImportLayoutDetails">
  
-			    <p:layoutUnit position="west" size="300" resizable="true" styleClass="menu">
+			    <p:layoutUnit position="west" size="500" resizable="true" styleClass="menu">
 					<h:form enctype="multipart/form-data">
-	    				<p:fileUpload value="#{loGaImport.file}" mode="simple"/>
-	    				<p:commandButton value="Submit" ajax="false" actionListener="#{loGaImport.upload}" disabled="false" />
+					    <p:fileUpload value="#{loGaImport.file}" fileUploadListener="#{loGaImport.upload}" mode="advanced" dragDropSupport="false" update="@(form), messages, dataTableLoGa" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(csv)$/" rendered="#{loGaImport.file == null}"/>
+						<p:contextMenu for="dataTableLoGa">
+		        			<p:menuitem value="erfassen" update="dataTableLoGa" icon="menuUserAdd" />
+		        			<p:menuitem value="löschen" update="dataTableLoGa" icon=" fa fa-remove" actionListener="#{loGaImport.deleteRow}"/>
+		    			</p:contextMenu>	    
 					</h:form>
+					<p:messages id="messages" showDetail="true"/>
 			    </p:layoutUnit>
 	 
 
 		    <p:layoutUnit id="logaImportLayoutDetailsCenter" position="center">
+				<p:dataTable id="dataTableLoGa" var="loGaDatensatz" value="#{loGaImport.daten}" rowStyleClass="#{loGaDatensatz.rowStyle}" rowKey="#{loGaDatensatz.lineNumber}" selection="#{loGaImport.selectedRow}" selectionMode="single">
+				    
+				    <f:facet name="header">
+						<h:outputText value="LoGa Importdatei: #{loGaImport.file.fileName}" />
+    				</f:facet>
+				    <p:ajax event="rowSelect" listener="#{loGaImport.onRowSelect}" />
+				    <p:column headerText="Zeile" sortBy="#{loGaDatensatz.lineNumber}">
+				        <h:outputText value="#{loGaDatensatz.lineNumber}" />
+				    </p:column>
+				    <p:column headerText="PNr" sortBy="#{loGaDatensatz.personalNummer}">
+				        <h:outputText value="#{loGaDatensatz.personalNummer}" />
+				    </p:column>
+				 
+				    <p:column headerText="Brutto" sortBy="#{loGaDatensatz.brutto}">
+				        <h:outputText value="#{loGaDatensatz.brutto}" />
+				    </p:column>
+				 
+				    <p:column headerText="Monat">
+				        <h:outputText value="#{loGaDatensatz.abrechnungsMonatSQL}" />
+				    </p:column>
+				 
+				    <p:column headerText="Tarifgruppe" sortBy="#{loGaDatensatz.tarifGruppe}">
+				        <h:outputText value="#{loGaDatensatz.tarifGruppe}" />
+				    </p:column>
+				    <p:column headerText="Tarifstufe" sortBy="#{loGaDatensatz.tarifstufe}">
+				        <h:outputText value="#{loGaDatensatz.tarifstufe}" />
+				    </p:column>		
+				    <p:column headerText="StellenAnteil" sortBy="#{loGaDatensatz.stellenAnteil}">
+				        <h:outputText value="#{loGaDatensatz.stellenAnteil}" />
+				    </p:column>					    		    
+				</p:dataTable>		
 		    </p:layoutUnit>
  
 			</p:layout>

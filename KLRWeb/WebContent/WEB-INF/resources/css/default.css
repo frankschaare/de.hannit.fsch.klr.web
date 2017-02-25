@@ -16,7 +16,17 @@ body {
 	border-collapse: separate !important;
 }
 
+.rowStyleOrange {
+    background-color: #fca752 !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
 
+.rowStyleRed {
+    background-color: #ff3300 !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
 
 .summeOK {
 	color: rgb(0, 102, 0);
@@ -51,6 +61,40 @@ body {
     padding-top: 5px;
     width: 346px;
 }	
+
+.menuDatei
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/tableImport16px.png']}) !important;
+}
+
+.menuDateiLogaImport
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/MoneyAdd16px.png']}) !important;
+}
+
+.menuUser
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/User16px.png']}) !important;
+}	
+
+.menuUserAdd
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/UserAdd16px.png']}) !important;
+}
+
+.benutzerErfassenUnit
+{
+	width: 30% !important;
+}
+
+.benutzerErfassenLabel
+{
+	padding-left: 70px !important;
+}
 
 .treeNodeUserOK
 {

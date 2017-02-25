@@ -28,6 +28,8 @@ public interface DataService
 {
 public String getConnectionInfo();	
 public ArrayList<Mitarbeiter> getMitarbeiter();
+public ArrayList<Mitarbeiter> getMitarbeiterOhneAZV();
+
 public boolean existsMitarbeiter(int personalNummer);
 
 public ArrayList<Arbeitszeitanteil> getArbeitszeitanteile(int personalNummer);

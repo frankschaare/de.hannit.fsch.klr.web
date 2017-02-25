@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:view contentType="text/html">
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Benutzer erfassen</title>
+	<f:facet name="last">
+		<h:outputStylesheet library="css" name="default.css" target="head" />
+  	</f:facet>
+</h:head>
+<h:body>
+
+	<p:layout id="benutzerErfassenLayout" fullPage="true">
+ 	    <p:layoutUnit position="north" size="45" resizable="true" styleClass="menu">
+	        <ui:include src="/WEB-INF/navigation/menu.xhtml" />
+	    </p:layoutUnit>
+	 	<h:form id="form">
+		    <p:layoutUnit id="benutzerErfassenUnit" position="west" styleClass="benutzerErfassenUnit" resizable="true" >
+				<p:panelGrid id="benutzerErfassenGrid" columns="3" style="width: 100%">
+				    <f:facet name="header">
+				    	<h:outputText value="Mitarbeiter erfassen:" />
+				    </f:facet>
+				 
+				    <h:outputText value="Personalnummer:" styleClass="benutzerErfassenLabel"/>
+				    <p:inputText id="inputPersonalnummer" value="#{benutzerErfassen.selectedMitarbeiter.personalNR}" required="true" requiredMessage="Personalnummer darf nicht leer sein !"/>
+				 	<p:message for="inputPersonalnummer" />
+				 
+				    <h:outputText value="NetzwerkID:" styleClass="benutzerErfassenLabel"/>
+				    <p:inputText id="inputNetzwerkID" value="#{benutzerErfassen.selectedMitarbeiter.benutzerName}" required="false"/>
+				 	<p:message for="inputNetzwerkID" />
+				 	
+				    <h:outputText value="Nachname:" styleClass="benutzerErfassenLabel"/>
+				    <p:inputText id="inputNachname" value="#{benutzerErfassen.selectedMitarbeiter.nachname}" required="true" requiredMessage="Nachname darf nicht leer sein !"/>
+				 	<p:message for="inputNachname" />
+				 
+				    <h:outputText value="Vorname:" styleClass="benutzerErfassenLabel"/>
+				    <p:inputText id="inputVorname" value="#{benutzerErfassen.selectedMitarbeiter.vorname}" required="false"/>
+				 	<p:message for="inputVorname" />
+				 	
+				 	<p:commandButton id="btnBenutzerReset" value="zurücksetzen" actionListener="#{benutzerErfassen.reset}" update="@(:input)" disabled="#{benutzerErfassen.btnBenutzerResetDisabled}"/>				 	
+				 	<p:commandButton id="btnBenutzerAktualisieren" value="aktualisieren" disabled="#{benutzerErfassen.btnBenutzerAktualisierenDisabled}"/>
+				 	<p:commandButton id="btnBenutzerSpeichern" value="speichern" disabled="#{benutzerErfassen.btnBenutzerSpeichernDisabled}"/>
+				</p:panelGrid>
+	
+		    </p:layoutUnit>
+	 	</h:form>
+	    <p:layoutUnit id="dbMitarbeiterUnit" position="center" size="800">
+	    	<p:dataTable id="dataTableMitarbeiter" var="mitarbeiter" value="#{benutzerErfassen.mitarbeiterModel}" selectionMode="single" selection="#{benutzerErfassen.selectedMitarbeiter}" rowKey="#{mitarbeiter.personalNR}">
+			    <f:facet name="header">
+					<h:outputText value="Aktuell in der Datenbank vorhandene Mitarbeiter" />
+    			</f:facet>
+    			<p:ajax event="rowSelect" listener="#{benutzerErfassen.onRowSelect}" update="@(:input), msgs" />
+				    <p:column headerText="Personalnummer" sortBy="#{mitarbeiter.personalNR}">
+				        <h:outputText value="#{mitarbeiter.personalNR}" />
+				    </p:column>
+				    <p:column headerText="NetzwerkID" sortBy="#{mitarbeiter.benutzerName}">
+				        <h:outputText value="#{mitarbeiter.benutzerName}" />
+				    </p:column>
+				 
+				    <p:column headerText="Nachname" sortBy="#{mitarbeiter.nachname}">
+				        <h:outputText value="#{mitarbeiter.nachname}" />
+				    </p:column>
+				 
+				    <p:column headerText="Vorname">
+				        <h:outputText value="#{mitarbeiter.vorname}" />
+				    </p:column>
+	    
+				</p:dataTable>	
+	    </p:layoutUnit>
+ 
+	    <p:layoutUnit position="south" size="80" resizable="true">
+	        <p:messages id="msgs" showDetail="true"/>
+	    </p:layoutUnit>
+	</p:layout>
+		
+</h:body>
+</f:view>
+</html>

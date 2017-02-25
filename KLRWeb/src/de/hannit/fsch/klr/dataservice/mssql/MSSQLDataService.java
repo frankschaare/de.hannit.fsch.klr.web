@@ -23,13 +23,16 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.ProjectStage;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import de.hannit.fsch.klr.dataservice.DataService;
+import de.hannit.fsch.klr.model.Datumsformate;
 import de.hannit.fsch.klr.model.azv.AZVDaten;
 import de.hannit.fsch.klr.model.azv.AZVDatensatz;
 import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
@@ -42,6 +45,7 @@ import de.hannit.fsch.klr.model.mitarbeiter.Tarifgruppen;
 import de.hannit.fsch.klr.model.organisation.Monatsbericht;
 import de.hannit.fsch.klr.model.organisation.Organisation;
 import de.hannit.fsch.klr.model.team.TeamMitgliedschaft;
+import de.hannit.fsch.util.DateUtility;
 
 
 
@@ -54,7 +58,10 @@ import de.hannit.fsch.klr.model.team.TeamMitgliedschaft;
 public class MSSQLDataService implements DataService, Serializable 
 {
 private static final long serialVersionUID = -764568972931562160L;
-private final static Logger log = Logger.getLogger(MSSQLDataService.class.getSimpleName());	
+private final static Logger log = Logger.getLogger(MSSQLDataService.class.getSimpleName());
+private String logPrefix = null;	
+private FacesContext fc = null;
+
 private InitialContext ic;
 private DataSource ds = null;
 private Connection con;
@@ -69,7 +76,13 @@ private DateFormat sqlServerDatumsFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
 private ArrayList<Mitarbeiter> mitarbeiter = null;	
 private ArrayList<LocalDate> azvBerichtsMonate = null;	
-private ArrayList<LocalDate> logaBerichtsMonate = null;	
+private ArrayList<LocalDate> logaBerichtsMonate = null;
+private LocalDate maxDate = null;	
+private LocalDate maxAZVDate = null;	
+private LocalDate maxLoGaDate = null;
+
+private Organisation hannit = null;
+
 
 
 	/**
@@ -77,7 +90,8 @@ private ArrayList<LocalDate> logaBerichtsMonate = null;
 	 */
 	public MSSQLDataService() 
 	{
-
+	logPrefix = this.getClass().getName() + ": ";
+	fc = FacesContext.getCurrentInstance();
 		try 
 		{
 		ic = new InitialContext();
@@ -101,6 +115,18 @@ private ArrayList<LocalDate> logaBerichtsMonate = null;
 		      }
 		    log.log(Level.INFO, "Verbindung zur KLR-Datenbank hergestellt. Es liegen AZV-Meldungen für " + azvBerichtsMonate.size() + " Berichtsmonate vor.");
 		    
+				for (LocalDate localDate : azvBerichtsMonate) 
+				{
+					if (maxAZVDate == null)
+					{
+					maxAZVDate = localDate;	
+					}
+					else
+					{
+					maxAZVDate = localDate.isAfter(maxAZVDate) ? localDate : maxAZVDate;	
+					}	
+				}		    
+		    
 			logaBerichtsMonate = new ArrayList<>();
 			ps = con.prepareStatement(PreparedStatements.SELECT_LOGA_BERICHTSMONATE);
 			subSelect = ps.executeQuery();
@@ -110,6 +136,31 @@ private ArrayList<LocalDate> logaBerichtsMonate = null;
 			   logaBerichtsMonate.add(subSelect.getDate(1).toLocalDate()); 	  
 			   }		    
 		    log.log(Level.INFO, "Es liegen LoGa Daten für " + logaBerichtsMonate.size() + " Berichtsmonate vor.");
+		    
+			for (LocalDate localDate : logaBerichtsMonate) 
+			{
+				if (maxLoGaDate == null)
+				{
+				maxLoGaDate = localDate;	
+				}
+				else
+				{
+				maxLoGaDate = localDate.isAfter(maxLoGaDate) ? localDate : maxLoGaDate;	
+				}		
+			}
+			if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "in der Datenbank wurden LoGa Daten bis " + Datumsformate.DF_MONATJAHR.format(maxLoGaDate) + " gefunden");}			    
+		    
+			if (maxLoGaDate.isBefore(maxAZVDate) || maxLoGaDate.isEqual(maxAZVDate)) 
+			{
+			maxDate = maxAZVDate;	
+			} 
+			else 
+			{
+			maxDate = maxLoGaDate;	
+			}
+			hannit = new Organisation();
+			hannit.setMitarbeiter(getAZVMonat(DateUtility.asDate(maxDate)));
+			if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Mitarbeiterliste enthält " + hannit.getMitarbeiterNachPNR().size() + " Mitarbeiter");}	
 		    
 			}
 			else
@@ -127,6 +178,39 @@ private ArrayList<LocalDate> logaBerichtsMonate = null;
 		e.printStackTrace();
 		}
 	}
+
+	
+	
+	@Override
+	public ArrayList<Mitarbeiter> getMitarbeiterOhneAZV() 
+	{
+	Mitarbeiter m = null;	
+	mitarbeiter = new ArrayList<Mitarbeiter>();
+		try 
+		{
+		ps = con.prepareStatement(PreparedStatements.SELECT_MITARBEITER);
+		rs = ps.executeQuery();
+			
+	      while (rs.next()) 
+	      {
+	   	  m = new Mitarbeiter();
+	   	  m.setPersonalNR(rs.getInt(1));
+	   	  m.setBenutzerName((rs.getString(2) != null ? rs.getString(2) : "unbekannt"));
+	   	  m.setNachname(rs.getString(3));
+	   	  m.setVorname((rs.getString(4) != null ? rs.getString(4) : "unbekannt"));
+		    	  
+	   	  mitarbeiter.add(m);
+		  }
+		} 
+		catch (SQLException e) 
+		{
+		e.printStackTrace();
+		}	
+		
+	return mitarbeiter;
+	}
+
+
 
 	@Override
 	public ArrayList<Mitarbeiter> getMitarbeiter() 
@@ -1744,6 +1828,11 @@ private ArrayList<LocalDate> logaBerichtsMonate = null;
 	public void setResult(boolean result) {this.result = result;}
 	public ArrayList<LocalDate> getAzvBerichtsMonate() {return azvBerichtsMonate;}
 	public ArrayList<LocalDate> getLogaBerichtsMonate() {return logaBerichtsMonate;}
+	public LocalDate getMaxDate() {return maxDate;}
+	public LocalDate getMaxAZVDate() {return maxAZVDate;}
+	public LocalDate getMaxLoGaDate() {return maxLoGaDate;}
+	public Organisation getHannit() {return hannit;}
+	
 	
 	
 	
