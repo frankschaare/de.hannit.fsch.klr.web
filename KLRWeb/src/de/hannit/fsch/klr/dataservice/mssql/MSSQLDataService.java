@@ -1460,6 +1460,81 @@ private Organisation hannit = null;
 	}	
 	
 	@Override
+	public SQLException updateMitarbeiter(Mitarbeiter toUpdate) 
+	{
+	SQLException e = null;	
+		
+		try 
+		{
+		con.setAutoCommit(false);	
+		ps = con.prepareStatement(PreparedStatements.UPDATE_MITARBEITER);
+			
+		ps.setString(1, toUpdate.getBenutzerName());
+		ps.setString(2, toUpdate.getNachname());
+		ps.setString(3, toUpdate.getVorname());
+		ps.setInt(4, toUpdate.getPersonalNR());
+		ps.execute();
+			
+		con.commit();
+		con.setAutoCommit(true);	
+		} 
+		catch (SQLException exception) 
+		{
+		exception.printStackTrace();
+		e = exception;
+			try
+			{
+			con.rollback();
+			}
+			catch (SQLException e1)
+			{
+			e1.printStackTrace();
+			}
+		}	
+	return e;
+	}
+
+
+
+	@Override
+	public SQLException deleteMitarbeiter(Mitarbeiter toDelete) 
+	{
+	SQLException e = null;	
+	int personalNummer = toDelete.getPersonalNR();
+		
+		try 
+		{
+		con.setAutoCommit(false);	
+		ps = con.prepareStatement(PreparedStatements.DELETE_AZV);
+		ps.setInt(1, personalNummer);
+		ps.execute();
+		
+		ps = con.prepareStatement(PreparedStatements.DELETE_MITARBEITER);
+		ps.setInt(1, personalNummer);
+		ps.execute();		
+			
+		con.commit();
+		con.setAutoCommit(true);	
+		} 
+		catch (SQLException exception) 
+		{
+		exception.printStackTrace();
+		e = exception;
+			try
+			{
+			con.rollback();
+			}
+			catch (SQLException e1)
+			{
+			e1.printStackTrace();
+			}
+		}	
+	return e;
+	}
+
+
+
+	@Override
 	public SQLException setTeammitgliedschaft(int personalNummer, int teamNummer, Date startDatum)
 	{
 	SQLException e = null;	

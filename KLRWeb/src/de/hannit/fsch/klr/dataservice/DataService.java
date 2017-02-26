@@ -29,8 +29,9 @@ public interface DataService
 public String getConnectionInfo();	
 public ArrayList<Mitarbeiter> getMitarbeiter();
 public TreeMap<Integer,Mitarbeiter> getMitarbeiterOhneAZV();
-
 public boolean existsMitarbeiter(int personalNummer);
+public SQLException updateMitarbeiter(Mitarbeiter toUpdate);
+public SQLException deleteMitarbeiter(Mitarbeiter toDelete);
 
 public ArrayList<Arbeitszeitanteil> getArbeitszeitanteile(int personalNummer);
 public ArrayList<Arbeitszeitanteil> getArbeitszeitanteileMAXMonat(int personalNummer);

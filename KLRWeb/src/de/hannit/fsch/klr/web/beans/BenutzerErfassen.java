@@ -1,6 +1,7 @@
 package de.hannit.fsch.klr.web.beans;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -55,7 +56,7 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
 
-	loadData();
+	load();
 	setSelectedMitarbeiter(new Mitarbeiter());
 	}
 	
@@ -75,7 +76,7 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 	/*
 	 * Lädt Daten aus der DB
 	 */
-	public void loadData()
+	public void load()
 	{
 	fc = FacesContext.getCurrentInstance();	
 	logPrefix = this.getClass().getName() + ".loadData(): ";
@@ -124,7 +125,7 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 		
 		detail = "Die Personalnummer in der Datenbank kann nicht überschrieben werden. Wenn Sie einen vorhandenen Mitarbeiter bearbeiten wollen, klicken Sie auf den entsprechenden Eintrag in der Mitarbeitertabelle.";
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "PNR existiert bereits !", "Die Personalnummer in der Datenbank kann nicht überschrieben werden. Wenn Sie einen vorhandenen Mitarbeiter bearbeiten wollen, klicken Sie auf den entsprechenden Eintrag in der Mitarbeitertabelle.");
-		fc.addMessage(input.getClientId(fc), message);			
+		fc.addMessage(input.getClientId(fc), message);		
 		}
 
 	}
@@ -139,7 +140,18 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 		
 		if (strName.length() > 0) 
 		{
-		setBtnBenutzerSpeichernDisabled(false);	
+			if (dataService.existsMitarbeiter(selectedMitarbeiter.getPersonalNR())) 
+			{
+			setBtnBenutzerSpeichernDisabled(true);
+			setBtnBenutzerAktualisierenDisabled(false);
+			setBtnBenutzerResetDisabled(false);
+			} 
+			else 
+			{
+			setBtnBenutzerSpeichernDisabled(false);
+			setBtnBenutzerAktualisierenDisabled(true);
+			setBtnBenutzerResetDisabled(false);
+			}
 		}
 		else
 		{
@@ -149,6 +161,93 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 		fc.addMessage(input.getClientId(fc), message);			
 		}
 
+	}	
+
+	public void save()
+	{
+	SQLException e = dataService.setMitarbeiter(selectedMitarbeiter);
+	fc = FacesContext.getCurrentInstance();
+	
+		if (e != null) 
+		{
+		detail = e.getLocalizedMessage();
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Speichern", detail);
+		fc.addMessage(null, message);			
+		} 
+		else 
+		{
+		detail = "Mitarbeiter " + selectedMitarbeiter.getNachname() + " wurde unter der Personalnummer " + selectedMitarbeiter.getPersonalNR() + " erfolgreich in der Datenbank gespeichert.";
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Erfolgreich gepeichert !", detail);
+		fc.addMessage(null, message);	
+		
+		mitarbeiter = dataService.getMitarbeiterOhneAZV();
+		mitarbeiterModel = new ListDataModel<>(mitarbeiter.descendingMap().values().stream().collect(Collectors.toCollection(ArrayList<Mitarbeiter>::new)));		
+		
+		selectedMitarbeiter = new Mitarbeiter();	
+		setGridHeaderText(BenutzerErfassen.ERFASSEN);
+		btnBenutzerSpeichernDisabled = true;
+		btnBenutzerAktualisierenDisabled = true;
+		btnBenutzerResetDisabled = true;
+		inputPersonalnummerDisabled = false;
+		}			
+	}
+
+	public void delete()
+	{
+	SQLException e = dataService.deleteMitarbeiter(selectedMitarbeiter);
+	fc = FacesContext.getCurrentInstance();
+	
+		if (e != null) 
+		{
+		detail = e.getLocalizedMessage();
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Löschen", detail);
+		fc.addMessage(null, message);			
+		} 
+		else 
+		{
+		detail = "Mitarbeiter " + selectedMitarbeiter.getNachname() + " wurde mit der Personalnummer " + selectedMitarbeiter.getPersonalNR() + " erfolgreich gelöscht.";
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Erfolgreich aktualisiert !", detail);
+		fc.addMessage(null, message);	
+		
+		mitarbeiter = dataService.getMitarbeiterOhneAZV();
+		mitarbeiterModel = new ListDataModel<>(mitarbeiter.descendingMap().values().stream().collect(Collectors.toCollection(ArrayList<Mitarbeiter>::new)));		
+		
+		selectedMitarbeiter = new Mitarbeiter();	
+		setGridHeaderText(BenutzerErfassen.ERFASSEN);
+		btnBenutzerSpeichernDisabled = true;
+		btnBenutzerAktualisierenDisabled = true;
+		btnBenutzerResetDisabled = true;
+		inputPersonalnummerDisabled = false;
+		}			
+	}		
+	
+	public void update()
+	{
+	SQLException e = dataService.updateMitarbeiter(selectedMitarbeiter);
+	fc = FacesContext.getCurrentInstance();
+	
+		if (e != null) 
+		{
+		detail = e.getLocalizedMessage();
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Aktualisieren", detail);
+		fc.addMessage(null, message);			
+		} 
+		else 
+		{
+		detail = "Mitarbeiter " + selectedMitarbeiter.getNachname() + " wurde mit der Personalnummer " + selectedMitarbeiter.getPersonalNR() + " erfolgreich in der Datenbank aktualisiert.";
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Erfolgreich aktualisiert !", detail);
+		fc.addMessage(null, message);	
+		
+		mitarbeiter = dataService.getMitarbeiterOhneAZV();
+		mitarbeiterModel = new ListDataModel<>(mitarbeiter.descendingMap().values().stream().collect(Collectors.toCollection(ArrayList<Mitarbeiter>::new)));		
+		
+		selectedMitarbeiter = new Mitarbeiter();	
+		setGridHeaderText(BenutzerErfassen.ERFASSEN);
+		btnBenutzerSpeichernDisabled = true;
+		btnBenutzerAktualisierenDisabled = true;
+		btnBenutzerResetDisabled = true;
+		inputPersonalnummerDisabled = false;
+		}			
 	}	
 	
 	public void reset()

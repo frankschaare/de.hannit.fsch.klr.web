@@ -61,7 +61,7 @@
 				 		</p:column>
 				 		<p:column>
 						    <p:inputText id="inputNachname" value="#{benutzerErfassen.selectedMitarbeiter.nachname}" required="true" requiredMessage="Nachname darf nicht leer sein !">
-   						    	<p:ajax event="blur" process="inputNachname" update="@(:input) msginputNachname msgs" listener="#{benutzerErfassen.validateNachnameAjax}"/>
+   						    	<p:ajax event="blur" process="inputPersonalnummer inputNetzwerkID inputNachname" update="@(:input) msginputNachname msgs" listener="#{benutzerErfassen.validateNachnameAjax}"/>
 						    </p:inputText>				 		
 				 		</p:column>
 				 		<p:column style="width: 40%; padding: 30px 0px;">
@@ -86,10 +86,10 @@
 						 	<p:commandButton id="btnBenutzerReset" value="zurücksetzen" actionListener="#{benutzerErfassen.reset}" process="@this" update="@(:input)" disabled="#{benutzerErfassen.btnBenutzerResetDisabled}" icon="menuUserDisabled"/>				 					 		
 				 		</p:column>
 				 		<p:column style="padding-left: 30px;">
-				 			<p:commandButton id="btnBenutzerAktualisieren" value="aktualisieren" disabled="#{benutzerErfassen.btnBenutzerAktualisierenDisabled}" icon="menuUserEdit"/>
+				 			<p:commandButton id="btnBenutzerAktualisieren" value="aktualisieren" actionListener="#{benutzerErfassen.update}" process="formEdit" update="formEdit dataTableMitarbeiter msgs" disabled="#{benutzerErfassen.btnBenutzerAktualisierenDisabled}" icon="menuUserEdit"/>
 				 		</p:column>
 				 		<p:column style="width: 40%; padding: 30px 0px;">
-						 	<p:commandButton id="btnBenutzerSpeichern" value="speichern" disabled="#{benutzerErfassen.btnBenutzerSpeichernDisabled}" icon="menuUserAdd"/>		 		
+						 	<p:commandButton id="btnBenutzerSpeichern" value="speichern" actionListener="#{benutzerErfassen.save}" process="formEdit" update="formEdit dataTableMitarbeiter msgs" disabled="#{benutzerErfassen.btnBenutzerSpeichernDisabled}" icon="menuUserAdd"/>		 		
 				 		</p:column>
 				 	</p:row>
 				 	
@@ -117,8 +117,12 @@
 				    <p:column headerText="Vorname">
 				        <h:outputText value="#{mitarbeiter.vorname}" />
 				    </p:column>
-	    
 				</p:dataTable>	
+				<h:form id="contextForm">
+					<p:contextMenu for="dataTableMitarbeiter">
+	        			<p:menuitem value="löschen" process="contextForm" update="formEdit dataTableMitarbeiter msgs" icon="menuUserDisabled" actionListener="#{benutzerErfassen.delete}"/>
+	    			</p:contextMenu>	    
+				</h:form>				
 	    </p:layoutUnit>
  
 	    <p:layoutUnit position="south" size="80" resizable="true">

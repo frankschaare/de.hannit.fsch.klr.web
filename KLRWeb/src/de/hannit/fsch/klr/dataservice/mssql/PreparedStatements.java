@@ -17,6 +17,8 @@ public static final String SELECT_COUNT_ERGEBNIS = "SELECT COUNT(*) AS Anzahl FR
 public static final String DELETE_ERGEBNIS = "DELETE FROM [dbo].[Ergebnisse] WHERE Berichtsmonat = ? AND TeamNR = ?";
 
 public static final String INSERT_MITARBEITER = "INSERT INTO Mitarbeiter ([PNr],[Benutzer],[Nachname],[Vorname]) VALUES (?,?,?,?)";
+public static final String UPDATE_MITARBEITER = "UPDATE [dbo].[Mitarbeiter] SET [Benutzer] = ?,[Nachname] = ?,[Vorname] = ? WHERE PNr = ?";
+public static final String DELETE_MITARBEITER = "DELETE FROM [dbo].[Mitarbeiter] WHERE [PNr] = ?";
 public static final String SELECT_MITARBEITER = "SELECT * FROM [dbo].[Mitarbeiter]";
 public static final String SELECT_PERSONALNUMMERN = "SELECT [PNr] FROM [dbo].[Mitarbeiter] ORDER BY [PNr]";
 public static final String SELECT_PERSONALNUMMER = "SELECT [PNr] FROM [dbo].[Mitarbeiter] WHERE Nachname = ?";
@@ -49,6 +51,7 @@ public static final String SELECT_TARIFGRUPPEN = "SELECT Tarifgruppe, SUM(Brutto
 public static final String SELECT_TARIFGRUPPE_AUSHILFE = "SELECT Art FROM [dbo].[vwAushilfen] WHERE Mitarbeiter_PNr = ?";
 public static final String INSERT_AZV = "INSERT INTO [dbo].[AZVMeldungen] ([ID], [Mitarbeiter_PNR],[TeamNR],[Berichtsmonat],[Kostenstelle],[Kostentraeger],[Prozentanteil]) VALUES (NEWID(),?, ?, ?, ?, ?, ?)";
 public static final String UPDATE_AZV = "UPDATE [dbo].[AZVMeldungen] SET [Kostenstelle] = ?, [Kostentraeger] = ?,[Prozentanteil] = ? WHERE [ID] = ?";
+public static final String DELETE_AZV = "DELETE FROM [dbo].[AZVMeldungen] WHERE [Mitarbeiter_PNR] = ?";
 public static final String SELECT_ARBEITSZEITANTEILE = "SELECT * FROM [dbo].[AZVMeldungen] WHERE Mitarbeiter_PNR = ?";
 public static final String SELECT_ARBEITSZEITANTEILE_BERICHTSMONATE = "SELECT Distinct [Berichtsmonat] FROM [dbo].[AZVMeldungen] ORDER BY Berichtsmonat";
 public static final String SELECT_ARBEITSZEITANTEILE_BERICHTSMONAT = "SELECT * FROM [dbo].[vwArbeitszeitanteile] WHERE Berichtsmonat = ?";
