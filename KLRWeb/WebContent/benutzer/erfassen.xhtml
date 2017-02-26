@@ -21,42 +21,88 @@
  	    <p:layoutUnit position="north" size="45" resizable="true" styleClass="menu">
 	        <ui:include src="/WEB-INF/navigation/menu.xhtml" />
 	    </p:layoutUnit>
-	 	<h:form id="form">
 		    <p:layoutUnit id="benutzerErfassenUnit" position="west" styleClass="benutzerErfassenUnit" resizable="true" >
-				<p:panelGrid id="benutzerErfassenGrid" columns="3" style="width: 100%">
+	 		<h:form id="formEdit">
+				<p:panelGrid id="benutzerErfassenGrid" style="width: 100%; border-collapse: separate;">
 				    <f:facet name="header">
-				    	<h:outputText value="Mitarbeiter erfassen:" />
+				        <p:row>
+				            <p:column colspan="7"><p:outputLabel id="gridHeaderText" value="#{benutzerErfassen.gridHeaderText}"/></p:column>
+				        </p:row>				    
 				    </f:facet>
-				 
-				    <h:outputText value="Personalnummer:" styleClass="benutzerErfassenLabel"/>
-				    <p:inputText id="inputPersonalnummer" value="#{benutzerErfassen.selectedMitarbeiter.personalNR}" required="true" requiredMessage="Personalnummer darf nicht leer sein !"/>
-				 	<p:message for="inputPersonalnummer" />
-				 
-				    <h:outputText value="NetzwerkID:" styleClass="benutzerErfassenLabel"/>
-				    <p:inputText id="inputNetzwerkID" value="#{benutzerErfassen.selectedMitarbeiter.benutzerName}" required="false"/>
-				 	<p:message for="inputNetzwerkID" />
+				 	<p:row>
+				 		<p:column>
+						    <h:outputText value="Personalnummer:" styleClass="benutzerErfassenLabel"/>
+				 		</p:column>
+				 		<p:column>
+						    <p:inputText id="inputPersonalnummer" value="#{benutzerErfassen.selectedMitarbeiter.personalNR}" maxlength="6" disabled="#{benutzerErfassen.inputPersonalnummerDisabled}" required="true" requiredMessage="Personalnummer darf nicht leer sein !" validator="#{benutzerErfassen.validatePNR}">
+						    	<p:ajax event="blur" process="inputPersonalnummer" update="@(:input) msgInputPersonalnummer msgs" listener="#{benutzerErfassen.validatePNRAjax}"/>
+						    </p:inputText>
+				 		</p:column>
+				 		<p:column style="width: 40%; padding: 30px 0px;">
+						 	<p:message id="msgInputPersonalnummer" for="inputPersonalnummer" />
+				 		</p:column>
+				 	</p:row>
+		 		
+				 	<p:row>
+				 		<p:column>
+						    <h:outputText value="NetzwerkID:" styleClass="benutzerErfassenLabel"/>	
+				 		</p:column>
+				 		<p:column>
+						    <p:inputText id="inputNetzwerkID" value="#{benutzerErfassen.selectedMitarbeiter.benutzerName}" required="false"/>				 		
+				 		</p:column>
+				 		<p:column style="width: 40%; padding: 30px 0px;">
+						 	<p:message for="inputNetzwerkID" />				 		
+				 		</p:column>
+				 	</p:row>
 				 	
-				    <h:outputText value="Nachname:" styleClass="benutzerErfassenLabel"/>
-				    <p:inputText id="inputNachname" value="#{benutzerErfassen.selectedMitarbeiter.nachname}" required="true" requiredMessage="Nachname darf nicht leer sein !"/>
-				 	<p:message for="inputNachname" />
-				 
-				    <h:outputText value="Vorname:" styleClass="benutzerErfassenLabel"/>
-				    <p:inputText id="inputVorname" value="#{benutzerErfassen.selectedMitarbeiter.vorname}" required="false"/>
-				 	<p:message for="inputVorname" />
+				 	<p:row>
+				 		<p:column>
+						    <h:outputText value="Nachname:" styleClass="benutzerErfassenLabel"/>				 		
+				 		</p:column>
+				 		<p:column>
+						    <p:inputText id="inputNachname" value="#{benutzerErfassen.selectedMitarbeiter.nachname}" required="true" requiredMessage="Nachname darf nicht leer sein !">
+   						    	<p:ajax event="blur" process="inputNachname" update="@(:input) msginputNachname msgs" listener="#{benutzerErfassen.validateNachnameAjax}"/>
+						    </p:inputText>				 		
+				 		</p:column>
+				 		<p:column style="width: 40%; padding: 30px 0px;">
+						 	<p:message id="msginputNachname" for="inputNachname" />		 		
+				 		</p:column>
+				 	</p:row>
 				 	
-				 	<p:commandButton id="btnBenutzerReset" value="zurücksetzen" actionListener="#{benutzerErfassen.reset}" update="@(:input)" disabled="#{benutzerErfassen.btnBenutzerResetDisabled}"/>				 	
-				 	<p:commandButton id="btnBenutzerAktualisieren" value="aktualisieren" disabled="#{benutzerErfassen.btnBenutzerAktualisierenDisabled}"/>
-				 	<p:commandButton id="btnBenutzerSpeichern" value="speichern" disabled="#{benutzerErfassen.btnBenutzerSpeichernDisabled}"/>
+				 	<p:row>
+				 		<p:column>
+						    <h:outputText value="Vorname:" styleClass="benutzerErfassenLabel"/>				 		
+				 		</p:column>
+				 		<p:column>
+						    <p:inputText id="inputVorname" value="#{benutzerErfassen.selectedMitarbeiter.vorname}" required="false"/>				 		
+				 		</p:column>
+				 		<p:column style="width: 40%; padding: 30px 0px;">
+						 	<p:message for="inputVorname" />				 		
+				 		</p:column>
+				 	</p:row>
+				 	
+				 	<p:row>
+				 		<p:column>
+						 	<p:commandButton id="btnBenutzerReset" value="zurücksetzen" actionListener="#{benutzerErfassen.reset}" process="@this" update="@(:input)" disabled="#{benutzerErfassen.btnBenutzerResetDisabled}" icon="menuUserDisabled"/>				 					 		
+				 		</p:column>
+				 		<p:column style="padding-left: 30px;">
+				 			<p:commandButton id="btnBenutzerAktualisieren" value="aktualisieren" disabled="#{benutzerErfassen.btnBenutzerAktualisierenDisabled}" icon="menuUserEdit"/>
+				 		</p:column>
+				 		<p:column style="width: 40%; padding: 30px 0px;">
+						 	<p:commandButton id="btnBenutzerSpeichern" value="speichern" disabled="#{benutzerErfassen.btnBenutzerSpeichernDisabled}" icon="menuUserAdd"/>		 		
+				 		</p:column>
+				 	</p:row>
+				 	
 				</p:panelGrid>
+		 	</h:form>
 	
 		    </p:layoutUnit>
-	 	</h:form>
 	    <p:layoutUnit id="dbMitarbeiterUnit" position="center" size="800">
 	    	<p:dataTable id="dataTableMitarbeiter" var="mitarbeiter" value="#{benutzerErfassen.mitarbeiterModel}" selectionMode="single" selection="#{benutzerErfassen.selectedMitarbeiter}" rowKey="#{mitarbeiter.personalNR}">
 			    <f:facet name="header">
 					<h:outputText value="Aktuell in der Datenbank vorhandene Mitarbeiter" />
     			</f:facet>
-    			<p:ajax event="rowSelect" listener="#{benutzerErfassen.onRowSelect}" update="@(:input), msgs" />
+    			<p:ajax event="rowSelect" listener="#{benutzerErfassen.onRowSelect}" update="formEdit msgs" />
 				    <p:column headerText="Personalnummer" sortBy="#{mitarbeiter.personalNR}">
 				        <h:outputText value="#{mitarbeiter.personalNR}" />
 				    </p:column>
@@ -76,7 +122,7 @@
 	    </p:layoutUnit>
  
 	    <p:layoutUnit position="south" size="80" resizable="true">
-	        <p:messages id="msgs" showDetail="true"/>
+	        <p:messages id="msgs" showDetail="true" globalOnly="true"/>
 	    </p:layoutUnit>
 	</p:layout>
 		

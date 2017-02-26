@@ -28,7 +28,7 @@ public interface DataService
 {
 public String getConnectionInfo();	
 public ArrayList<Mitarbeiter> getMitarbeiter();
-public ArrayList<Mitarbeiter> getMitarbeiterOhneAZV();
+public TreeMap<Integer,Mitarbeiter> getMitarbeiterOhneAZV();
 
 public boolean existsMitarbeiter(int personalNummer);
 

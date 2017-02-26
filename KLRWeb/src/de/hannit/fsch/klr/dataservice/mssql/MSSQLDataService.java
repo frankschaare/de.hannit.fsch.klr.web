@@ -182,10 +182,10 @@ private Organisation hannit = null;
 	
 	
 	@Override
-	public ArrayList<Mitarbeiter> getMitarbeiterOhneAZV() 
+	public TreeMap<Integer, Mitarbeiter> getMitarbeiterOhneAZV() 
 	{
 	Mitarbeiter m = null;	
-	mitarbeiter = new ArrayList<Mitarbeiter>();
+	TreeMap<Integer, Mitarbeiter> mMap = new TreeMap<Integer, Mitarbeiter>();
 		try 
 		{
 		ps = con.prepareStatement(PreparedStatements.SELECT_MITARBEITER);
@@ -199,7 +199,7 @@ private Organisation hannit = null;
 	   	  m.setNachname(rs.getString(3));
 	   	  m.setVorname((rs.getString(4) != null ? rs.getString(4) : "unbekannt"));
 		    	  
-	   	  mitarbeiter.add(m);
+	   	  mMap.put(m.getPersonalNR(), m);
 		  }
 		} 
 		catch (SQLException e) 
@@ -207,7 +207,7 @@ private Organisation hannit = null;
 		e.printStackTrace();
 		}	
 		
-	return mitarbeiter;
+	return mMap;
 	}
 
 
