@@ -35,7 +35,10 @@ private	int prozentAnteil = 0;
 private String source = null;
 private boolean existsMitarbeiter = false;
 private boolean existsAZVDatensatz = false;
-private boolean mitarbeiterChecked = false;	
+private boolean mitarbeiterChecked = false;
+private String rowStyle = null;
+private boolean warnings = false;
+private boolean errors = false;
 
 private Calendar cal = Calendar.getInstance();
 
@@ -272,6 +275,25 @@ private Calendar cal = Calendar.getInstance();
 	this.strVorname = parts[0].split("\\.")[0];
 	
 	}
+	
+	public String getRowStyle() 
+	{
+		if (errors) 
+		{
+		rowStyle = "rowStyleRed";	
+		} 
+		else 
+		{
+		rowStyle = warnings ? "rowStyleOrange" : rowStyle;	
+		}
+	return rowStyle;
+	}
+	
+	public void setRowStyle(String rowStyle) {this.rowStyle = rowStyle;}
+	public boolean getWarnings() {return warnings;}
+	public void setWarnings(boolean warnings) {this.warnings = warnings;}
+	public boolean getErrors() {return errors;}
+	public void setErrors(boolean errors) {this.errors = errors;}
 	
 	
 }

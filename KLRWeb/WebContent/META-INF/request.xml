@@ -1,0 +1,29 @@
+﻿<?xml version='1.0' encoding='UTF-8' ?>
+<DMSQuery>
+	<Archive name="Mitarbeiter">
+    	<ObjectType name="AZV-Beleg" type="DOCUMENT">
+    		<Fields field_schema="ALL"/>
+            	<ParentObjects child_schema="DEF">
+            		<ParentObjectType name="Mitarbeiter" type="FOLDER">
+            			<Fields>
+            				<Field name="Name"/>
+            				<Field name="Vorname"/>
+            				<Field name="Team" />
+            				<Field name="Benutzername"/>
+            				<Field name="E-Mail"/>
+            			</Fields>
+					</ParentObjectType>
+				</ParentObjects>
+   				<Conditions>
+       				<ConditionObject name="AZV-Beleg" type="DOCUMENT">
+           				<FieldCondition name="Jahr" operator="=">
+               				<Value>2014</Value>
+           				</FieldCondition>
+           				<FieldCondition name="Monat" operator="=">
+           					<Value>Januar</Value>
+           				</FieldCondition>
+       				</ConditionObject>
+   				</Conditions>
+    	</ObjectType>
+  	</Archive>
+</DMSQuery>

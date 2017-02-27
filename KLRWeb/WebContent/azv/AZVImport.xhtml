@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:view contentType="text/html">
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>AZV Webservice</title>
+	<f:facet name="last">
+		<h:outputStylesheet library="css" name="default.css" target="head" />
+  	</f:facet>
+</h:head>
+<h:body>
+
+	<p:layout id="azvLayoutMenu" fullPage="true">
+ 
+	    <p:layoutUnit position="north" size="45" resizable="true" styleClass="menu">
+	        <ui:include src="/WEB-INF/navigation/menu.xhtml" />
+	    </p:layoutUnit>
+	 
+
+	    <p:layoutUnit id="detailsAZV" position="center">
+	    
+	    	<p:layout id="azvImportLayoutDetails">
+ 
+			    <p:layoutUnit position="west" size="500" resizable="true" styleClass="menu">
+			 		<h:form id="form">
+						<p:panelGrid id="azvDetailsGrid" style="width: 100%; border-collapse: separate;">
+						    <f:facet name="header">
+						        <p:row>
+						            <p:column colspan="7"><p:outputLabel id="gridHeaderText" value="Details"/></p:column>
+						        </p:row>				    
+						    </f:facet>
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Auswertungsmonat:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+									<p:calendar id="german" value="#{aZVImport.selectedDate}" locale="de_DE" navigator="true" pattern="dd.MM.yyyy" pagedate="#{aZVImport.selectedDate}"/>						 		
+								</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>
+						 		</p:column>
+						 	</p:row>						 	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Anzahl Datensätze:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{aZVImport.anzahlDaten}"/>
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>
+						 		</p:column>
+						 	</p:row>
+			 		
+						 	<!-- p:row>
+						 		<p:column>
+								    <h:outputText value="Fehler:" styleClass="benutzerErfassenLabel"/>	
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.anzahlErrors}"/>				 		
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>				 		
+						 		</p:column>
+						 	</p:row>
+						 	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Warnungen:" styleClass="benutzerErfassenLabel"/>				 		
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.anzahlWarnungen}"/>
+								</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+									<h:outputText value=" "/>		 		
+						 		</p:column>
+						 	</p:row-->
+						 	
+						 	<p:row>
+						 		<p:column>
+								 	<p:commandButton id="btnAZVReset" value="zurücksetzen" actionListener="#{aZVImport.reset}" process="@this" update="@(form) messages" disabled="#{aZVImport.btnAZVResetDisabled}" icon="buttonResetDefault"/>				 					 		
+						 		</p:column>
+						 		<p:column style="padding-left: 30px;">
+									<h:outputText value=" "/>		 		
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								 	<p:commandButton id="btnAZVSpeichern" value="speichern" actionListener="#{aZVImport.save}" process="@this" update="@(form) messages" disabled="#{aZVImport.btnAZVSpeichernDisbled}" icon="menuDBInsert"/>		 		
+						 		</p:column>
+						 	</p:row>
+						 	
+						</p:panelGrid>
+				 	</h:form>					
+					<p:messages id="messages" showDetail="true"/>
+			    </p:layoutUnit>
+	 
+
+		    <p:layoutUnit id="logaImportLayoutDetailsCenter" position="center">
+				<p:dataTable id="dataTableAZV" var="azv" value="#{aZVImport.daten}" rowStyleClass="#{azv.rowStyle}" rowKey="#{azv.rowCount}" selection="#{aZVImport.selectedRow}" selectionMode="single">
+				    
+				    <f:facet name="header">
+						<h:outputText value="Verbunden mit " />
+    				</f:facet>
+				    <p:ajax event="rowSelect" listener="#{aZVImport.onRowSelect}" />
+				    <p:column headerText="Zeile" sortBy="#{azv.rowCount}">
+				        <h:outputText value="#{azv.rowCount}" />
+				    </p:column>
+				    <p:column headerText="PNr" sortBy="#{azv.personalNummer}">
+				        <h:outputText value="#{azv.personalNummer}" />
+				    </p:column>
+				 
+				    <p:column headerText="Benutzer" sortBy="#{azv.userName}">
+				        <h:outputText value="#{azv.userName}" />
+				    </p:column>
+				 
+				    <p:column headerText="Name">
+				        <h:outputText value="#{azv.nachname}" />
+				    </p:column>
+				 
+				    <p:column headerText="Team" sortBy="#{azv.team}">
+				        <h:outputText value="#{azv.team}" />
+				    </p:column>
+				    <p:column headerText="Berichtsmonat" sortBy="#{azv.berichtsMonat}">
+				        <h:outputText value="#{azv.berichtsMonatAsString}" />
+				    </p:column>		
+				    <p:column headerText="Kostenstellen" sortBy="#{azv.kostenStelle}">
+				        <h:outputText value="#{azv.kostenStelle}" />
+				    </p:column>		
+				    <p:column headerText="Kostenträger" sortBy="#{azv.kostenTraeger}">
+				        <h:outputText value="#{azv.kostenTraeger}" />
+				    </p:column>
+				    <p:column headerText="%" sortBy="#{azv.prozentAnteil}">
+				        <h:outputText value="#{azv.prozentAnteil}" />
+				    </p:column>					    	
+				</p:dataTable>		
+		    </p:layoutUnit>
+ 
+			</p:layout>
+	    </p:layoutUnit>
+ 
+	</p:layout>
+		
+</h:body>
+</f:view>
+</html>

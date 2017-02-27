@@ -86,6 +86,18 @@ body {
    	background-image:url(#{resource['/images/MoneyAdd16px.png']}) !important;
 }
 
+.menuAZVImport
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/csv.png']}) !important;
+}
+
+.menuAZVWebservice
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/dataBaseWebservice16x.png']}) !important;
+}
+
 .menuDBInsert
 {
 	padding-right: 3px;
