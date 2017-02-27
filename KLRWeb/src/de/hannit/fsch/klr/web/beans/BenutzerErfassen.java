@@ -3,6 +3,7 @@ package de.hannit.fsch.klr.web.beans;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,9 +56,16 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 	{
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
-
 	load();
-	setSelectedMitarbeiter(new Mitarbeiter());
+	
+	selectedMitarbeiter = new Mitarbeiter();
+	Map<String,String> params = fc.getExternalContext().getRequestParameterMap();
+		if (params.containsKey("personalNummer")) 
+		{
+		System.out.println("Parameter gefunden !");	
+		selectedMitarbeiter.setPersonalNR(Integer.parseInt(params.get("personalNummer")));	
+		}
+	setSelectedMitarbeiter(selectedMitarbeiter);
 	}
 	
     public void onRowSelect(SelectEvent event) 

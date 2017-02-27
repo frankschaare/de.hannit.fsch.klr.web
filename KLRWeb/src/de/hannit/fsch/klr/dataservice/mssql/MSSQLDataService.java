@@ -38,6 +38,7 @@ import de.hannit.fsch.klr.model.azv.AZVDatensatz;
 import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
 import de.hannit.fsch.klr.model.kostenrechnung.KostenStelle;
 import de.hannit.fsch.klr.model.kostenrechnung.KostenTraeger;
+import de.hannit.fsch.klr.model.loga.LoGaDatei;
 import de.hannit.fsch.klr.model.loga.LoGaDatensatz;
 import de.hannit.fsch.klr.model.mitarbeiter.Mitarbeiter;
 import de.hannit.fsch.klr.model.mitarbeiter.Tarifgruppe;
@@ -420,6 +421,48 @@ private Organisation hannit = null;
 		
 	return mitarbeiter;
 	}
+	
+	@Override
+	public SQLException setLoGaDaten(TreeMap<Integer, LoGaDatensatz> toInsert) 
+	{
+	SQLException e = null;	
+		
+		try 
+		{
+		con.setAutoCommit(false);	
+		ps = con.prepareStatement(PreparedStatements.INSERT_LOGA);
+			
+			for (LoGaDatensatz datenSatz : toInsert.values()) 
+			{
+			ps.setInt(1, datenSatz.getPersonalNummer());
+			ps.setDate(2, datenSatz.getAbrechnungsMonatSQL());
+			ps.setDouble(3, datenSatz.getBrutto());
+			ps.setString(4, datenSatz.getTarifGruppe());
+			ps.setInt(5, datenSatz.getTarifstufe());
+			ps.setDouble(6, datenSatz.getStellenAnteil());			
+			ps.execute();
+			}
+		
+		con.commit();
+		con.setAutoCommit(true);	
+		} 
+		catch (SQLException exception) 
+		{
+		exception.printStackTrace();
+		e = exception;
+			try
+			{
+			con.rollback();
+			}
+			catch (SQLException e1)
+			{
+			e1.printStackTrace();
+			}
+		}	
+	return e;
+	}
+
+
 
 	@Override
 	public SQLException setLoGaDaten(LoGaDatensatz datenSatz)
@@ -582,6 +625,28 @@ private Organisation hannit = null;
 	return result;
 	}
 	
+	@Override
+	public boolean existsLoGaDatensatz(LoGaDatensatz toCheck) 
+	{
+	boolean result = false;	
+		try 
+		{
+		ps = con.prepareStatement(PreparedStatements.SELECT_LOGADATENSATZ_BERICHTSMONAT);
+		ps.setInt(1, toCheck.getPersonalNummer());
+		ps.setString(2, Datumsformate.STANDARDFORMAT_SQLSERVER.format(toCheck.getAbrechnungsMonat()));
+		rs = ps.executeQuery();
+				
+	    result = rs.next();
+		} 
+		catch (SQLException e) 
+		{
+		e.printStackTrace();
+		}	
+	return result;
+	}
+
+
+
 	@Override
 	public boolean existsAZVDatensatz(int personalNummer, java.sql.Date berichtsMonat)
 	{
@@ -1459,6 +1524,52 @@ private Organisation hannit = null;
 	return e;
 	}	
 	
+	@Override
+	public SQLException updateLoGaDaten(LoGaDatei toUpdate) 
+	{
+	SQLException e = null;	
+	String strDatum = Datumsformate.STANDARDFORMAT_SQLSERVER.format(DateUtility.asDate(toUpdate.getAbrechnungsMonat()));
+			
+		try 
+		{
+		con.setAutoCommit(false);	
+		ps = con.prepareStatement(PreparedStatements.DELETE_LOGADATEN_BERICHTSMONAT);
+		ps.setString(1, strDatum);
+		ps.execute();
+			
+		ps = con.prepareStatement(PreparedStatements.INSERT_LOGA);
+			for (LoGaDatensatz datenSatz : toUpdate.getDaten().values()) 
+			{
+			ps.setInt(1, datenSatz.getPersonalNummer());
+			ps.setDate(2, datenSatz.getAbrechnungsMonatSQL());
+			ps.setDouble(3, datenSatz.getBrutto());
+			ps.setString(4, datenSatz.getTarifGruppe());
+			ps.setInt(5, datenSatz.getTarifstufe());
+			ps.setDouble(6, datenSatz.getStellenAnteil());			
+			ps.execute();
+			}	
+				
+		con.commit();
+		con.setAutoCommit(true);	
+		} 
+		catch (SQLException exception) 
+		{
+		exception.printStackTrace();
+		e = exception;
+			try
+			{
+			con.rollback();
+			}
+			catch (SQLException e1)
+			{
+			e1.printStackTrace();
+			}
+		}	
+	return e;
+	}
+
+
+
 	@Override
 	public SQLException updateMitarbeiter(Mitarbeiter toUpdate) 
 	{

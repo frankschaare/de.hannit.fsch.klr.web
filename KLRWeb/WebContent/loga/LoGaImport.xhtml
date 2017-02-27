@@ -29,13 +29,108 @@
 	    	<p:layout id="logaImportLayoutDetails">
  
 			    <p:layoutUnit position="west" size="500" resizable="true" styleClass="menu">
-					<h:form enctype="multipart/form-data">
+					<h:form id="formSelectUpload" enctype="multipart/form-data">
 					    <p:fileUpload value="#{loGaImport.file}" fileUploadListener="#{loGaImport.upload}" mode="advanced" dragDropSupport="false" update="@(form), messages, dataTableLoGa" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(csv)$/" rendered="#{loGaImport.file == null}"/>
 						<p:contextMenu for="dataTableLoGa">
-		        			<p:menuitem value="erfassen" update="dataTableLoGa" icon="menuUserAdd" />
-		        			<p:menuitem value="löschen" update="dataTableLoGa" icon=" fa fa-remove" actionListener="#{loGaImport.deleteRow}"/>
+							<p:menuitem value="erfassen" update="dataTableLoGa" icon="menuUserAdd" action="/benutzer/erfassen">
+								<f:param name="personalNummer" value="#{loGaImport.selectedRow.personalNummer}" />
+							</p:menuitem>
+		        			<p:menuitem value="neu prüfen" update="dataTableLoGa" icon="menuCSVReload"/>
 		    			</p:contextMenu>	    
 					</h:form>
+			 		<h:form id="formUpload">
+						<p:panelGrid id="logaDetailsGrid" style="width: 100%; border-collapse: separate;">
+						    <f:facet name="header">
+						        <p:row>
+						            <p:column colspan="7"><p:outputLabel id="gridHeaderText" value="Details"/></p:column>
+						        </p:row>				    
+						    </f:facet>
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Anzahl Datensätze:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.anzahlDaten}"/>
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>
+						 		</p:column>
+						 	</p:row>
+						 	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Abrechnungsmonat:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.formattedAbrechnungsMonat}"/>
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>
+						 		</p:column>
+						 	</p:row>						 	
+						 	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Summe Brutto:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.formattedSummeBrutto}"/>
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>
+						 		</p:column>
+						 	</p:row>	
+						 	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Summe Stellen:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.formattedSummeStellen}"/>
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>
+						 		</p:column>
+						 	</p:row>						 						 	
+				 		
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Fehler:" styleClass="benutzerErfassenLabel"/>	
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.anzahlErrors}"/>				 		
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>				 		
+						 		</p:column>
+						 	</p:row>
+						 	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="Warnungen:" styleClass="benutzerErfassenLabel"/>				 		
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{loGaImport.anzahlWarnungen}"/>
+								</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+									<h:outputText value=" "/>		 		
+						 		</p:column>
+						 	</p:row>
+						 	
+						 	<p:row>
+						 		<p:column>
+								 	<p:commandButton id="btnLoGaReset" value="zurücksetzen" actionListener="#{loGaImport.reset}" process="@this" update="@(form) dataTableLoGa messages" disabled="#{loGaImport.btnLoGaResetDisabled}" icon="buttonResetDefault"/>				 					 		
+						 		</p:column>
+						 		<p:column style="padding-left: 30px;">
+								 	<p:commandButton id="btnLoGaUpdate" value="aktualisieren" actionListener="#{loGaImport.update}" process="@this" update="@(form) dataTableLoGa messages" disabled="#{loGaImport.btnLoGaUpdateDisabled}" icon="buttonDBUpdate"/>				 					 		
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								 	<p:commandButton id="btnLoGaSpeichern" value="speichern" actionListener="#{loGaImport.save}" process="@this" update="@(form) dataTableLoGa messages" disabled="#{loGaImport.btnLoGaSpeichernDisbled}" icon="menuDBInsert"/>		 		
+						 		</p:column>
+						 	</p:row>
+						 	
+						</p:panelGrid>
+				 	</h:form>					
 					<p:messages id="messages" showDetail="true"/>
 			    </p:layoutUnit>
 	 

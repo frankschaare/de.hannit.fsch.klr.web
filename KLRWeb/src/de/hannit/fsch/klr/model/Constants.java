@@ -100,6 +100,15 @@ public class Constants
 	public static final String TREETYPE_DISABLED = "disabled";
 
 	}
+
+	/**
+	 * CSS Styleklassen
+	 */
+	public static interface CSS 
+	{
+	public static final String ROWSTYLE_RED = "rowStyleRed";
+	public static final String ROWSTYLE_ORANGE = "rowStyleOrange";
+	}	
 	
 	/**
 	 * Felder der AZV Daten

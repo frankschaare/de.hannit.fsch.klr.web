@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import de.hannit.fsch.klr.model.azv.AZVDaten;
 import de.hannit.fsch.klr.model.azv.AZVDatensatz;
 import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
+import de.hannit.fsch.klr.model.loga.LoGaDatei;
 import de.hannit.fsch.klr.model.loga.LoGaDatensatz;
 import de.hannit.fsch.klr.model.mitarbeiter.Mitarbeiter;
 import de.hannit.fsch.klr.model.mitarbeiter.Tarifgruppen;
@@ -76,7 +77,10 @@ public SQLException setVZAEMonatsDaten(String strDatum, String strTarifgruppe, d
 public SQLException setDatenimport(String name, String pfad, int anzahlDaten, Date berichtsMonat, String datenQuelle);
 
 public void setMitarbeiter(ArrayList<String[]> fields);	
+public boolean existsLoGaDatensatz(LoGaDatensatz toCheck);
 public SQLException setLoGaDaten(LoGaDatensatz datenSatz);	
+public SQLException updateLoGaDaten(LoGaDatei toUpdate);	
+public SQLException setLoGaDaten(TreeMap<Integer, LoGaDatensatz> toInsert);	
 
 public SQLException setCallcenterDaten(List<String> lines);
 }

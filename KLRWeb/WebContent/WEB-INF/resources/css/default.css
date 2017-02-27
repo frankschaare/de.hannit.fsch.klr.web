@@ -68,10 +68,28 @@ body {
    	background-image:url(#{resource['/images/tableImport16px.png']}) !important;
 }
 
+.buttonResetDefault
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/delete_16.png']}) !important;
+}
+
+.buttonDBUpdate
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/dataBaseUpdate16px.png']}) !important;
+}
+
 .menuDateiLogaImport
 {
 	padding-right: 3px;
    	background-image:url(#{resource['/images/MoneyAdd16px.png']}) !important;
+}
+
+.menuDBInsert
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/dataBaseCommit16px.png']}) !important;
 }
 
 .menuUser
@@ -96,6 +114,12 @@ body {
 {
 	padding-right: 3px;
    	background-image:url(#{resource['/images/UserRemove16px.png']}) !important;
+}
+
+.menuCSVReload
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/reload.png']}) !important;
 }
 
 .benutzerErfassenUnit

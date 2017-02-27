@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -15,6 +16,7 @@ import org.primefaces.model.UploadedFile;
 import de.hannit.fsch.common.CSVConstants;
 import de.hannit.fsch.common.Dezimalformate;
 import de.hannit.fsch.klr.model.csv.CSVDatei;
+import de.hannit.fsch.util.DateUtility;
 
 /**
  * @author fsch
@@ -28,10 +30,11 @@ private String label = null;
 
 private TreeMap<Integer, LoGaDatensatz> daten = new TreeMap<Integer, LoGaDatensatz>();
 private LoGaDatensatz datenSatz = null;
+private LocalDate abrechnungsMonat = null;
+private double summeBrutto = 0;
+private double summeStellen = 0;
+
 private SimpleDateFormat format = new SimpleDateFormat(CSVConstants.Loga.ABRECHNUNGSMONAT_DATUMSFORMAT_CSV);
-
-private String logPrefix;
-
 
 	/**
 	 * @param arg0
@@ -131,7 +134,8 @@ private String logPrefix;
 			break;
 			}	
 			lineCount++;
-		}	
+		}
+	setAbrechnungsMonat(DateUtility.asLocalDate(daten.lastEntry().getValue().getAbrechnungsMonat()));	
 	}
 
 	/*
@@ -139,7 +143,6 @@ private String logPrefix;
 	 */
 	private LoGaDatensatz split(String line)
 	{
-	logPrefix = this.getClass().getName() + ".split()";	
 	datenSatz = new LoGaDatensatz();	
 	datenSatz.setSource(line);
 	
@@ -161,6 +164,7 @@ private String logPrefix;
 		{
 		double brutto = (double) Dezimalformate.DFBRUTTO.parse(parts[CSVConstants.Loga.BRUTTO_INDEX_CSV].trim()).doubleValue();		
 		datenSatz.setBrutto(brutto);
+		summeBrutto = summeBrutto + brutto;
 		}
 		catch (NumberFormatException | ParseException e)
 		{
@@ -211,7 +215,8 @@ private String logPrefix;
 		try
 		{
 		double stellenAnteil = Double.parseDouble(parts[CSVConstants.Loga.STELLENNTEIL_INDEX_CSV].replace(",", "."));	
-		datenSatz.setStellenAnteil(stellenAnteil);;
+		datenSatz.setStellenAnteil(stellenAnteil);
+		summeStellen = summeStellen + stellenAnteil;
 		}
 		catch (NumberFormatException e)
 		{
@@ -283,5 +288,12 @@ private String logPrefix;
 		}
 	return label;
 	}
+
+	public LocalDate getAbrechnungsMonat() {return abrechnungsMonat;}
+	public void setAbrechnungsMonat(LocalDate abrechnungsMonat) {this.abrechnungsMonat = abrechnungsMonat;}
+	public double getSummeBrutto() {return summeBrutto;}
+	public void setSummeBrutto(double incoming) {this.summeBrutto =  incoming;}
+	public double getSummeStellen() {return summeStellen;}
+	public void setSummeStellen(double summeStellen) {this.summeStellen = summeStellen;}
 
 }
