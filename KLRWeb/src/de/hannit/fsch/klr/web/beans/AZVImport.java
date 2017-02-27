@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.application.ProjectStage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -43,19 +44,22 @@ private static final long serialVersionUID = -1303725843784618947L;
 private MSSQLDataService dataService;
 private final static Logger log = Logger.getLogger(AZVImport.class.getSimpleName());	
 private String logPrefix = null;	
+private String detail = null;
 private FacesContext fc = null;
 
 private IAZVClient webService = null;
 private AZVDaten azvDaten = null;
 private ArrayList<AZVDatensatz> azvMeldungen = null;
 private ArrayList<LocalDate> azvBerichtsMonate = null;
-private LocalDate maxAZVDate = null;	
+private LocalDate maxAZVDate = null;
+private LocalDate requestAZVDate = null;
 private Date selectedDate = null;
 private int anzahlDaten = 0;
 private ListDataModel<AZVDatensatz> daten = null;
 private AZVDatensatz selectedRow = null;
 
-
+private boolean btnAZVAnfrageDisbled = true;
+private String btnAZVAnfrageTTT = null;
 private boolean btnAZVResetDisabled = true;
 private boolean btnAZVSpeichernDisbled = true;
 
@@ -71,15 +75,39 @@ private XPath xpath = xpathfactory.newXPath();
 	{
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
-	//webService = new AZVClient();
 	azvDaten = new AZVDaten();
 	setMaxBerichtsmonat();
-	//TODO
-	//azvDaten.setBerichtsMonatSQL(dateTime.getMonth(), dateTime.getYear());
-	//log.info("EventBroker versendet AZV-Anfrage für den Berichtsmonat: " + azvDaten.getBerichtsMonatAsString(), plugin);
-
 	}
 	
+    public void onDateSelect(SelectEvent event) 
+    {
+    Date selected = (Date) event.getObject();	
+    setSelectedDate(selected);
+    }
+	
+	public void setSelectedDate(Date selectedDate) 
+	{
+	logPrefix = this.getClass().getName() + "setSelectedDate(Date selectedDate): ";
+		
+	this.selectedDate = selectedDate;
+	requestAZVDate = DateUtility.asLocalDate(getSelectedDate());
+	azvDaten.setBerichtsMonatSQL(requestAZVDate.getMonthValue(), requestAZVDate.getYear());
+	log.log(Level.INFO, logPrefix + "AZV Anfrage wurde für den Monat " + Datumsformate.DF_MONATJAHR.format(requestAZVDate) + " initialisiert");
+	
+		if (selectedDate != null && maxAZVDate.isBefore(requestAZVDate)) 
+		{
+		setBtnAZVAnfrageDisbled(false);
+		setBtnAZVAnfrageTTT("Startet die Abfrage des AZV Webservices, sofern die aktuellste AZV vor dem ausgewähltem Anfragedatum liegt.");	
+		} 
+		else 
+		{
+		setBtnAZVAnfrageDisbled(true);
+		setBtnAZVAnfrageTTT("Derzeit nicht verfügbar, da das ausgewählte Anfragedatum " + Datumsformate.DF_MONATJAHR.format(requestAZVDate) + " vor der aktuellsten, in der Datenbank gespeicherten, AZV für den Monat " + Datumsformate.DF_MONATJAHR.format(maxAZVDate) + " liegt.");	
+		}
+	setBtnAZVResetDisabled(true);
+	setBtnAZVSpeichernDisbled(true);
+	}
+
 	/*
 	 * Ermittelt den letzten Berichtmonat, für den AZV-Daten in der DB gespeichert sind.
 	 * Der Kalender wird dann auf den darauf folgenden Monat gestellt
@@ -129,22 +157,29 @@ private XPath xpath = xpathfactory.newXPath();
 	public void execute() 
 	{
    	logPrefix = this.getClass().getName() + ".execute(): ";
-	
-	// AZV Request vorbereiten
+	fc = FacesContext.getCurrentInstance();
+   	
+	webService = new AZVClient();
 	Date start = new Date();	
 	log.log(Level.INFO, logPrefix + "Starte Anfrage an den OS/ECM Webservice für den Berichtsmonat " + azvDaten.getRequestedMonth() + " " + azvDaten.getRequestedYear());	
 	
 	e = webService.setAZVRequest(azvDaten.getRequestedMonth(), azvDaten.getRequestedYear());
 		if (e != null)
 		{
-		// log.error(e.getMessage(), plugin, e);	
+		detail = e.getLocalizedMessage();	
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler bei der Anfrage !", detail);
+		fc.addMessage(null, message);	
+		e.printStackTrace();
 		}
 		else
 		{
 		doc = webService.getResultList();
 		Date end = new Date();
 		long anfrageDauer = end.getTime() - start.getTime();
-		log.log(Level.INFO, logPrefix + "Anfrage an den OS/ECM Webservice wurde in " + String.valueOf(anfrageDauer) + " Millisekunden abgeschlossen.");	
+		detail = "Anfrage an den OS/ECM Webservice wurde in " + String.valueOf(anfrageDauer) + " Millisekunden abgeschlossen.";	
+		log.log(Level.INFO, logPrefix + detail);	
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Anfrage erfolgreich !", detail);
+		fc.addMessage(null, message);	
 		
 		parseDocument();
 
@@ -319,21 +354,26 @@ private XPath xpath = xpathfactory.newXPath();
 		}	
 	}	
 	
-	
+	public String getFormattedMaxAZVDate() {return Datumsformate.DF_MONATJAHR.format(maxAZVDate);}
+
 	public AZVDatensatz getSelectedRow() {return selectedRow;}
 	public void setSelectedRow(AZVDatensatz selectedRow) {this.selectedRow = selectedRow;}
 
 	public MSSQLDataService getDataService() {return dataService;}
 	public void setDataService(MSSQLDataService dataService) {this.dataService = dataService;}
 	public Date getSelectedDate() {return selectedDate;}
-	public void setSelectedDate(Date selectedDate) {this.selectedDate = selectedDate;}
+	
 	public int getAnzahlDaten() {return anzahlDaten;}
 	public void setAnzahlDaten(int anzahlDaten) {this.anzahlDaten = anzahlDaten;}
 
-	public boolean isBtnAZVResetDisabled() {return btnAZVResetDisabled;}
+	public boolean getBtnAZVResetDisabled() {return btnAZVResetDisabled;}
 	public void setBtnAZVResetDisabled(boolean btnAZVResetDisabled) {this.btnAZVResetDisabled = btnAZVResetDisabled;}
-	public boolean isBtnAZVSpeichernDisbled() {return btnAZVSpeichernDisbled;}
+	public boolean getBtnAZVSpeichernDisbled() {return btnAZVSpeichernDisbled;}
 	public void setBtnAZVSpeichernDisbled(boolean btnAZVSpeichernDisbled) {this.btnAZVSpeichernDisbled = btnAZVSpeichernDisbled;}
+	public boolean getBtnAZVAnfrageDisbled() {return btnAZVAnfrageDisbled;}
+	public void setBtnAZVAnfrageDisbled(boolean btnAZVAnfrageDisbled) {this.btnAZVAnfrageDisbled = btnAZVAnfrageDisbled;}
+	public String getBtnAZVAnfrageTTT() {return btnAZVAnfrageTTT;}
+	public void setBtnAZVAnfrageTTT(String btnAZVAnfrageTTT) {this.btnAZVAnfrageTTT = btnAZVAnfrageTTT;}
 	
 	
 	

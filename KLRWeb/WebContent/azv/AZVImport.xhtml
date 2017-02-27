@@ -41,12 +41,37 @@
 								    <h:outputText value="Auswertungsmonat:" styleClass="benutzerErfassenLabel"/>
 						 		</p:column>
 						 		<p:column>
-									<p:calendar id="german" value="#{aZVImport.selectedDate}" locale="de_DE" navigator="true" pattern="dd.MM.yyyy" pagedate="#{aZVImport.selectedDate}"/>						 		
+									<p:calendar id="german" value="#{aZVImport.selectedDate}" locale="de_DE" navigator="true" pattern="dd.MM.yyyy" pagedate="#{aZVImport.selectedDate}">	
+										<p:ajax event="dateSelect" listener="#{aZVImport.onDateSelect}" update="form messages" />
+									</p:calendar>					 		
 								</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								 	<p:commandButton id="btnAZVAnfrage" value="Anfrage" actionListener="#{aZVImport.execute}" process="@this" update="@(form) dataTableAZV messages" disabled="#{aZVImport.btnAZVAnfrageDisbled}" icon="menuAZVWebservice"/>
+								 	<p:tooltip id="btnAZVAnfrageToolTip" for="btnAZVAnfrage" value="#{aZVImport.btnAZVAnfrageTTT}" position="right"/>	 		
+						 		</p:column>
+						 	</p:row>	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="selectedDate:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{aZVImport.selectedDate}"/>
+						 		</p:column>
 						 		<p:column style="width: 40%; padding: 30px 0px;">
 								    <h:outputText value=" "/>
 						 		</p:column>
 						 	</p:row>						 	
+						 	<p:row>
+						 		<p:column>
+								    <h:outputText value="aktuellste AZV:" styleClass="benutzerErfassenLabel"/>
+						 		</p:column>
+						 		<p:column>
+								    <h:outputText value="#{aZVImport.formattedMaxAZVDate}"/>
+						 		</p:column>
+						 		<p:column style="width: 40%; padding: 30px 0px;">
+								    <h:outputText value=" "/>
+						 		</p:column>
+						 	</p:row>						 						 	
 						 	<p:row>
 						 		<p:column>
 								    <h:outputText value="Anzahl Datensätze:" styleClass="benutzerErfassenLabel"/>
