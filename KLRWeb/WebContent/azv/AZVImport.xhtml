@@ -95,6 +95,23 @@
 								    <h:outputText value=" "/>				 		
 						 		</p:column>
 						 	</p:row>
+						 	<p:row>
+						 		<p:column colspan="7" style="border: 1px solid red !important;">
+									<p:ajaxStatus style="display:block;margin-bottom:2em;padding: 8px;">
+									    <f:facet name="default">
+									        <h:outputText value="Anfrage vorbereiten: die Anfrage kann mehrere Minuten dauern !" />
+									    </f:facet>
+									 
+									    <f:facet name="start">
+											<h:outputText value="lade Daten..." />
+									    </f:facet>
+									 
+									    <f:facet name="complete">
+									        <h:outputText value="Anfrage beendet" />
+									    </f:facet>
+									</p:ajaxStatus>				 		
+						 		</p:column>
+						 	</p:row>						 	
 						 	
 						 	<p:row>
 						 		<p:column>
@@ -121,38 +138,38 @@
 						<h:outputText value="#{aZVImport.connectionInfo}" />
     				</f:facet>
 				    <p:ajax event="rowSelect" listener="#{aZVImport.onRowSelect}" />
-				    <p:column headerText="Zeile" sortBy="#{azv.rowCount}">
+				    <p:column headerText="Zeile" sortBy="#{azv.rowCount}" style="text-align:center;">
 				        <h:outputText value="#{azv.rowCount}" />
 				    </p:column>
-				    <p:column headerText="PNr" sortBy="#{azv.personalNummer}">
+				    <p:column headerText="PNr" sortBy="#{azv.personalNummer}" style="text-align:center;" >
 				        <h:outputText value="#{azv.personalNummer}" />
 				    </p:column>
 				 
-				    <p:column headerText="Benutzer" sortBy="#{azv.userName}">
+				    <p:column headerText="Benutzer" sortBy="#{azv.userName}" style="padding-left:20px;">
 				        <h:outputText value="#{azv.userName}" />
 				    </p:column>
 				 
-				    <p:column headerText="Name" sortBy="#{azv.nachname}">
+				    <p:column headerText="Name" sortBy="#{azv.nachname}" style="padding-left:20px;">
 				        <h:outputText value="#{azv.nachname}" />
 				    </p:column>
 
-				    <p:column headerText="Vorname">
+				    <p:column headerText="Vorname" style="padding-left:20px;">
 				        <h:outputText value="#{azv.vorname}" />
 				    </p:column>
 				 
-				    <p:column headerText="Team" sortBy="#{azv.team}">
+				    <p:column headerText="Team" sortBy="#{azv.team}" style="text-align:center;">
 				        <h:outputText value="#{azv.team}" />
 				    </p:column>
-				    <p:column headerText="Berichtsmonat" sortBy="#{azv.berichtsMonat}">
+				    <p:column headerText="Berichtsmonat" sortBy="#{azv.berichtsMonat}" style="text-align:center;">
 				        <h:outputText value="#{azv.berichtsMonatAsString}" />
 				    </p:column>		
-				    <p:column headerText="Kostenstelle" sortBy="#{azv.kostenstelle}">
+				    <p:column headerText="Kostenstelle" sortBy="#{azv.kostenstelle}" style="text-align:center;">
 				        <h:outputText value="#{azv.kostenstelle}" />
 				    </p:column>		
-				    <p:column headerText="Kostenträger" sortBy="#{azv.kostentraeger}">
+				    <p:column headerText="Kostenträger" sortBy="#{azv.kostentraeger}" style="text-align:center;">
 				        <h:outputText value="#{azv.kostentraeger}" />
 				    </p:column>
-				    <p:column headerText="%" sortBy="#{azv.prozentanteil}">
+				    <p:column headerText="%" sortBy="#{azv.prozentanteil}" style="text-align:center;">
 				        <h:outputText value="#{azv.prozentanteil}" />
 				    </p:column>					    	
 				</p:dataTable>		
