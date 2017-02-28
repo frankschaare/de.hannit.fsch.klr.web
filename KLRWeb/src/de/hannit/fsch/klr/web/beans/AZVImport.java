@@ -1,6 +1,11 @@
 package de.hannit.fsch.klr.web.beans;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +20,15 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.ListDataModel;
+import javax.servlet.ServletContext;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -25,12 +39,12 @@ import org.primefaces.event.SelectEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.hannit.fsch.klr.dataservice.mssql.MSSQLDataService;
 import de.hannit.fsch.klr.model.Datumsformate;
 import de.hannit.fsch.klr.model.azv.AZVDaten;
 import de.hannit.fsch.klr.model.azv.AZVDatensatz;
-import de.hannit.fsch.klr.model.loga.LoGaDatensatz;
 import de.hannit.fsch.soa.osecm.IAZVClient;
 import de.hannit.fsch.soa.osecm.azv.AZVClient;
 import de.hannit.fsch.util.DateUtility;
@@ -48,6 +62,7 @@ private String detail = null;
 private FacesContext fc = null;
 
 private IAZVClient webService = null;
+private String connectionInfo = "Nicht verbunden";
 private AZVDaten azvDaten = null;
 private ArrayList<AZVDatensatz> azvMeldungen = null;
 private ArrayList<LocalDate> azvBerichtsMonate = null;
@@ -55,6 +70,8 @@ private LocalDate maxAZVDate = null;
 private LocalDate requestAZVDate = null;
 private Date selectedDate = null;
 private int anzahlDaten = 0;
+private int anzahlFehler = 0;
+
 private ListDataModel<AZVDatensatz> daten = null;
 private AZVDatensatz selectedRow = null;
 
@@ -91,7 +108,7 @@ private XPath xpath = xpathfactory.newXPath();
 		
 	this.selectedDate = selectedDate;
 	requestAZVDate = DateUtility.asLocalDate(getSelectedDate());
-	azvDaten.setBerichtsMonatSQL(requestAZVDate.getMonthValue(), requestAZVDate.getYear());
+	azvDaten.setBerichtsMonat(requestAZVDate);
 	log.log(Level.INFO, logPrefix + "AZV Anfrage wurde für den Monat " + Datumsformate.DF_MONATJAHR.format(requestAZVDate) + " initialisiert");
 	
 		if (selectedDate != null && maxAZVDate.isBefore(requestAZVDate)) 
@@ -135,7 +152,14 @@ private XPath xpath = xpathfactory.newXPath();
 
 	public void reset() 
 	{
-		
+	connectionInfo = "Nicht verbunden";	
+	setAnzahlDaten(0);
+	azvDaten = new AZVDaten();
+	azvDaten.setBerichtsMonat(DateUtility.asLocalDate(getSelectedDate()));
+	daten = new ListDataModel<AZVDatensatz>();
+	setBtnAZVAnfrageDisbled(false);
+	setBtnAZVResetDisabled(true);
+	setBtnAZVSpeichernDisbled(true);
 	}
 	
 	public void save() 
@@ -145,7 +169,7 @@ private XPath xpath = xpathfactory.newXPath();
 	
     public void onRowSelect(SelectEvent event) 
     {
-    LoGaDatensatz row =  (LoGaDatensatz) event.getObject();
+    AZVDatensatz row =  (AZVDatensatz) event.getObject();
     //RequestContext.getCurrentInstance().execute("updateButtons();");
     }
 	
@@ -154,16 +178,47 @@ private XPath xpath = xpathfactory.newXPath();
     return daten;
     }	
 	
+	/*
+	 * Verarbeitet die nun fertigen AZV-Datensätze zu einer sortierbaren Liste
+	 */
+	public void setDaten(ArrayList<AZVDatensatz> toSet) 
+	{
+	check();	
+	this.daten = new ListDataModel<AZVDatensatz>(toSet);
+	setBtnAZVAnfrageDisbled(true);
+	setBtnAZVResetDisabled(false);
+	setBtnAZVSpeichernDisbled(false);
+	}
+	
+	private void check() 
+	{
+	fc = FacesContext.getCurrentInstance();
+	FacesMessage message = null;
+	setAnzahlFehler(0);
+	
+		for (AZVDatensatz azv : azvDaten.getAzvMeldungen()) 
+		{
+			if (azv.getPersonalNummer() == 0) 
+			{
+			setAnzahlFehler((getAnzahlFehler() + 1));	
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Personalnummer fehlt !", "Personalnummer für AZV-Meldung: Benutzer = " + azv.getUserName() + ", Nachname = " + azv.getNachname() + ", Vorname = " + azv.getVorname() + ", eMail = " + azv.getEMail() + " wurde nicht gefunden.");	
+			fc.addMessage(null, message);
+			}
+		}
+	}
+
 	public void execute() 
 	{
    	logPrefix = this.getClass().getName() + ".execute(): ";
 	fc = FacesContext.getCurrentInstance();
    	
 	webService = new AZVClient();
-	Date start = new Date();	
-	log.log(Level.INFO, logPrefix + "Starte Anfrage an den OS/ECM Webservice für den Berichtsmonat " + azvDaten.getRequestedMonth() + " " + azvDaten.getRequestedYear());	
+	setConnectionInfo("Verbunden mit OS/ECM Web Service an IP: " + webService.getServerInfo());
 	
-	e = webService.setAZVRequest(azvDaten.getRequestedMonth(), azvDaten.getRequestedYear());
+	Date start = new Date();	
+	log.log(Level.INFO, logPrefix + "Starte Anfrage an den OS/ECM Webservice für den Berichtsmonat " + azvDaten.getRequestedMonthFromLocalDate() + " " + azvDaten.getRequestedYearFromLocalDate());	
+	
+	e = webService.setAZVRequest(azvDaten.getRequestedMonthFromLocalDate(), azvDaten.getRequestedYearFromLocalDate());
 		if (e != null)
 		{
 		detail = e.getLocalizedMessage();	
@@ -174,6 +229,7 @@ private XPath xpath = xpathfactory.newXPath();
 		else
 		{
 		doc = webService.getResultList();
+		// write(doc);
 		Date end = new Date();
 		long anfrageDauer = end.getTime() - start.getTime();
 		detail = "Anfrage an den OS/ECM Webservice wurde in " + String.valueOf(anfrageDauer) + " Millisekunden abgeschlossen.";	
@@ -187,9 +243,64 @@ private XPath xpath = xpathfactory.newXPath();
 		azvDaten.setErrors(false);
 		azvDaten.setChecked(false);
 		azvDaten.setRequestComplete(true);
+		
+		setAnzahlDaten(azvDaten.getAzvMeldungen().size());
+		setDaten(azvDaten.getAzvMeldungen());
 		}
 	}	
 	
+	@SuppressWarnings("unused")
+	private Document read() 
+	{
+	ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+	String dateiName = "responseUTF8.xml";
+	String dateiPfad = servletContext.getRealPath("/tmp");
+	Document result = null;
+	
+		try 
+		{
+		result = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(dateiPfad + "/" + dateiName));
+		} 
+		catch (SAXException | IOException | ParserConfigurationException e) 
+		{
+		e.printStackTrace();
+		}
+	return result;
+	}
+
+	
+	@SuppressWarnings("unused")
+	private void write(Document toWrite) 
+	{
+	DOMSource source = new DOMSource(doc);
+	ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+	String dateiName = "responseUTF8" + Datumsformate.DF_JAHRMONAT.format(azvDaten.getBerichtsMonat()) + ".xml";
+	String dateiPfad = servletContext.getRealPath("/tmp");
+
+		try 
+		{
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(dateiPfad + "/" + dateiName)), StandardCharsets.UTF_8);	
+		StreamResult result = new StreamResult(writer);
+		
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		transformer.transform(source, result);
+		} 
+		catch (IOException e) 
+		{
+		e.printStackTrace();
+		} 
+		catch (TransformerConfigurationException e) 
+		{
+		e.printStackTrace();
+		} 
+		catch (TransformerException e) 
+		{
+		e.printStackTrace();
+		}
+		
+	}
+
 	/*
 	 * Response parsen
 	 * Die Rückgabe des Webservices ist richtig kranker Scheiss.
@@ -212,7 +323,9 @@ private XPath xpath = xpathfactory.newXPath();
 	private void parseDocument()
 	{
     AZVDatensatz azvMeldung = null;
+    int rowCount = 1;
     String strNachname = null;
+    String strVorname = null;
     String strTeam = null;
     String strBenutzername = null;
     String strEMail = null;
@@ -254,6 +367,10 @@ private XPath xpath = xpathfactory.newXPath();
 							case "Name":
 							strNachname = field.getTextContent();	
 							break;
+							
+							case "Vorname":
+							strVorname = field.getTextContent();	
+							break;							
 							
 							case "Team":
 							strTeam = field.getTextContent();	
@@ -312,18 +429,14 @@ private XPath xpath = xpathfactory.newXPath();
 					    	NodeList azvAnteile = azvRow.getChildNodes();
 					    	
 				            azvMeldung = new AZVDatensatz();
+				            azvMeldung.setRowCount(rowCount);
 				            azvMeldung.setNachname(strNachname);
+				            azvMeldung.setVorname(strVorname);
 				            azvMeldung.setTeam(strTeam);
 				            azvMeldung.setUserName(strBenutzername);
 				            azvMeldung.setEMail(strEMail);
 				            
-				            int iPNR = dataService.getPersonalnummer(strNachname, strBenutzername);
-				            
-				            	if (iPNR == 0)
-								{
-								iPNR = dataService.getPersonalnummerbyUserName(strBenutzername);
-								}
-				            azvMeldung.setPersonalNummer(iPNR);
+				            azvMeldung.setPersonalNummer(dataService.getPersonalnummer(azvMeldung));
 				            
 				            azvMeldung.setBerichtsMonatAsString(azvDaten.getRequestedMonth());
 				            azvMeldung.setBerichtsJahrAsString(azvDaten.getRequestedYear());
@@ -342,6 +455,7 @@ private XPath xpath = xpathfactory.newXPath();
 			            	azvMeldung.setProzentanteil(Integer.parseInt(strProzentanteil));	
 			            	
 			            	azvMeldungen.add(azvMeldung);
+			            	rowCount++;
 							}
 						break;					
 
@@ -374,8 +488,9 @@ private XPath xpath = xpathfactory.newXPath();
 	public void setBtnAZVAnfrageDisbled(boolean btnAZVAnfrageDisbled) {this.btnAZVAnfrageDisbled = btnAZVAnfrageDisbled;}
 	public String getBtnAZVAnfrageTTT() {return btnAZVAnfrageTTT;}
 	public void setBtnAZVAnfrageTTT(String btnAZVAnfrageTTT) {this.btnAZVAnfrageTTT = btnAZVAnfrageTTT;}
-	
-	
-	
-	
+	public String getConnectionInfo() {return connectionInfo;}
+	public void setConnectionInfo(String connectionInfo) {this.connectionInfo = connectionInfo;}
+	public int getAnzahlFehler() {return anzahlFehler;}
+	public void setAnzahlFehler(int anzahlFehler) {this.anzahlFehler = anzahlFehler;}
+		
 }

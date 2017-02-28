@@ -4,6 +4,7 @@
 package de.hannit.fsch.klr.model.azv;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TreeMap;
@@ -26,6 +27,7 @@ private boolean checked = false;
 private boolean errors = false;
 private boolean azvMeldungenVorhanden = false;
 private java.sql.Date berichtsMonatSQL;
+private LocalDate berichtsMonat = null;
 
 	/**
 	 * 
@@ -104,6 +106,27 @@ private java.sql.Date berichtsMonatSQL;
 	public boolean isRequestComplete() {return requestComplete;}
 	public void setRequestComplete(boolean requestComplete)	{this.requestComplete = requestComplete;}
 
+	/*
+	 * Neu für Java8 API
+	 */
+	public String getRequestedMonthFromLocalDate()
+	{
+		if (berichtsMonat != null)
+		{
+		requestedMonth = Datumsformate.DF_MONAT.format(berichtsMonat);	
+		}
+	return requestedMonth;
+	}
+	
+	public String getRequestedYearFromLocalDate()
+	{		
+		if (berichtsMonat != null)
+		{
+		requestedYear = Datumsformate.DF_JAHR.format(berichtsMonat);	
+		}
+	return requestedYear;
+	}	
+	
 	public String getRequestedMonth()
 	{
 		if (berichtsMonatSQL != null)
@@ -171,11 +194,7 @@ private java.sql.Date berichtsMonatSQL;
 			}	
 		}	
 	}
-	
 
-
-
-
-
-
+	public LocalDate getBerichtsMonat() {return berichtsMonat;}
+	public void setBerichtsMonat(LocalDate berichtsMonat) {this.berichtsMonat = berichtsMonat;}
 }

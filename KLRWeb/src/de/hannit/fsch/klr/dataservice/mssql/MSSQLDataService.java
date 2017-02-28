@@ -1245,6 +1245,87 @@ private Organisation hannit = null;
 		}	
 	return personalNR;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.hannit.fsch.klr.dataservice.DataService#getPersonalnummer(de.hannit.fsch.klr.model.azv.AZVDatensatz)
+	 * 
+	 * @param AZV-Datensatz aus AZV-Webservice
+	 * 
+	 * Suchfunktion für Personalnummer. Wurde für KLRWeb überarbeitet.
+	 */
+	@Override
+	public Integer getPersonalnummer(AZVDatensatz azv) 
+	{
+	logPrefix = this.getClass().getName() + ".getPersonalnummer(AZVDatensatz azv): ";
+	fc = FacesContext.getCurrentInstance();
+	
+	int personalNR = 0;	
+	TreeMap<Integer, String> result = new TreeMap<Integer, String>();
+	
+		// Versuch, PNR über Vor und Zuname zu ermitteln
+		if (azv.getVorname() != null && azv.getVorname().length() > 0) 
+		{
+			try 
+			{
+			ps = con.prepareStatement(PreparedStatements.SELECT_PERSONALNUMMER_VORUNDZUNAME);
+			ps.setString(1, azv.getVorname());
+			ps.setString(2, azv.getNachname());
+			rs = ps.executeQuery();
+				
+				while (rs.next()) 
+				{
+				result.put(rs.getInt(1), rs.getString(2));	  
+				}
+				
+				switch (result.size())
+				{
+				// Keine Treffer gefunden, Personalnummer bleibt 0
+				case 0:
+				if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.WARNING, logPrefix + "Für Mitarbeiter " + azv.getVorname() + " " + azv.getNachname() + " wurde über die Suche nach Vor- und Zuname keine Personalnummer gefunden.");}	
+				break;
+					
+				case 1:
+				personalNR = result.firstKey();	
+				break;
+					
+				default:
+					for (Entry<Integer, String> entry : result.entrySet())
+					{
+						try
+						{
+							if (entry.getValue().equalsIgnoreCase(azv.getUserName()))
+							{
+							personalNR = entry.getKey(); 	
+							}					
+						}
+						catch (NullPointerException e)
+						{
+						log.log(Level.SEVERE, logPrefix + "Mitarbeiter " + azv.getVorname() + " " + azv.getNachname() + " existiert mehrfach in der DB, es gibt aber nicht für alle Einträge Benutzernamen !");	
+						}
+					}	  
+					break;
+				}
+			} 
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}	
+			
+		}
+		
+		// Ist die Personalnummer immer noch 0, erfolgt eine neuer Versuch über den Benutzernamen
+		if (personalNR == 0) 
+		{
+		personalNR = getPersonalnummerbyUserName(azv.getUserName());	
+		if (personalNR == 0) {log.log(Level.WARNING, logPrefix + "Für Mitarbeiter " + azv.getNachname() + ", Benutzername =  " + azv.getUserName() + " konnte auch über sie Suche nach Benutzername eine Personalnummer gefunden werden !");}
+		}
+
+
+	return personalNR;
+	}
+
+
 
 	@Override
 	public Integer getPersonalnummer(String nachname, String username)

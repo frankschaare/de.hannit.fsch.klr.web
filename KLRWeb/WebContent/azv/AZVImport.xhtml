@@ -50,17 +50,7 @@
 								 	<p:tooltip id="btnAZVAnfrageToolTip" for="btnAZVAnfrage" value="#{aZVImport.btnAZVAnfrageTTT}" position="right"/>	 		
 						 		</p:column>
 						 	</p:row>	
-						 	<p:row>
-						 		<p:column>
-								    <h:outputText value="selectedDate:" styleClass="benutzerErfassenLabel"/>
-						 		</p:column>
-						 		<p:column>
-								    <h:outputText value="#{aZVImport.selectedDate}"/>
-						 		</p:column>
-						 		<p:column style="width: 40%; padding: 30px 0px;">
-								    <h:outputText value=" "/>
-						 		</p:column>
-						 	</p:row>						 	
+			 	
 						 	<p:row>
 						 		<p:column>
 								    <h:outputText value="aktuellste AZV:" styleClass="benutzerErfassenLabel"/>
@@ -84,12 +74,12 @@
 						 		</p:column>
 						 	</p:row>
 			 		
-						 	<!-- p:row>
+						 	<p:row>
 						 		<p:column>
 								    <h:outputText value="Fehler:" styleClass="benutzerErfassenLabel"/>	
 						 		</p:column>
 						 		<p:column>
-								    <h:outputText value="#{loGaImport.anzahlErrors}"/>				 		
+								    <h:outputText value="#{aZVImport.anzahlFehler}"/>				 		
 						 		</p:column>
 						 		<p:column style="width: 40%; padding: 30px 0px;">
 								    <h:outputText value=" "/>				 		
@@ -98,25 +88,13 @@
 						 	
 						 	<p:row>
 						 		<p:column>
-								    <h:outputText value="Warnungen:" styleClass="benutzerErfassenLabel"/>				 		
-						 		</p:column>
-						 		<p:column>
-								    <h:outputText value="#{loGaImport.anzahlWarnungen}"/>
-								</p:column>
-						 		<p:column style="width: 40%; padding: 30px 0px;">
-									<h:outputText value=" "/>		 		
-						 		</p:column>
-						 	</p:row-->
-						 	
-						 	<p:row>
-						 		<p:column>
-								 	<p:commandButton id="btnAZVReset" value="zurücksetzen" actionListener="#{aZVImport.reset}" process="@this" update="@(form) messages" disabled="#{aZVImport.btnAZVResetDisabled}" icon="buttonResetDefault"/>				 					 		
+								 	<p:commandButton id="btnAZVReset" value="zurücksetzen" actionListener="#{aZVImport.reset}" process="@this" update="@(form) dataTableAZV messages" disabled="#{aZVImport.btnAZVResetDisabled}" icon="buttonResetDefault"/>				 					 		
 						 		</p:column>
 						 		<p:column style="padding-left: 30px;">
 									<h:outputText value=" "/>		 		
 						 		</p:column>
 						 		<p:column style="width: 40%; padding: 30px 0px;">
-								 	<p:commandButton id="btnAZVSpeichern" value="speichern" actionListener="#{aZVImport.save}" process="@this" update="@(form) messages" disabled="#{aZVImport.btnAZVSpeichernDisbled}" icon="menuDBInsert"/>		 		
+								 	<p:commandButton id="btnAZVSpeichern" value="speichern" actionListener="#{aZVImport.save}" process="@this" update="@(form) dataTableAZV messages" disabled="#{aZVImport.btnAZVSpeichernDisbled}" icon="menuDBInsert"/>		 		
 						 		</p:column>
 						 	</p:row>
 						 	
@@ -126,11 +104,11 @@
 			    </p:layoutUnit>
 	 
 
-		    <p:layoutUnit id="logaImportLayoutDetailsCenter" position="center">
+		    <p:layoutUnit id="azvImportLayoutDetailsCenter" position="center">
 				<p:dataTable id="dataTableAZV" var="azv" value="#{aZVImport.daten}" rowStyleClass="#{azv.rowStyle}" rowKey="#{azv.rowCount}" selection="#{aZVImport.selectedRow}" selectionMode="single">
 				    
 				    <f:facet name="header">
-						<h:outputText value="Verbunden mit " />
+						<h:outputText value="#{aZVImport.connectionInfo}" />
     				</f:facet>
 				    <p:ajax event="rowSelect" listener="#{aZVImport.onRowSelect}" />
 				    <p:column headerText="Zeile" sortBy="#{azv.rowCount}">
@@ -144,8 +122,12 @@
 				        <h:outputText value="#{azv.userName}" />
 				    </p:column>
 				 
-				    <p:column headerText="Name">
+				    <p:column headerText="Name" sortBy="#{azv.nachname}">
 				        <h:outputText value="#{azv.nachname}" />
+				    </p:column>
+
+				    <p:column headerText="Vorname">
+				        <h:outputText value="#{azv.vorname}" />
 				    </p:column>
 				 
 				    <p:column headerText="Team" sortBy="#{azv.team}">
@@ -154,14 +136,14 @@
 				    <p:column headerText="Berichtsmonat" sortBy="#{azv.berichtsMonat}">
 				        <h:outputText value="#{azv.berichtsMonatAsString}" />
 				    </p:column>		
-				    <p:column headerText="Kostenstellen" sortBy="#{azv.kostenStelle}">
-				        <h:outputText value="#{azv.kostenStelle}" />
+				    <p:column headerText="Kostenstelle" sortBy="#{azv.kostenstelle}">
+				        <h:outputText value="#{azv.kostenstelle}" />
 				    </p:column>		
-				    <p:column headerText="Kostenträger" sortBy="#{azv.kostenTraeger}">
-				        <h:outputText value="#{azv.kostenTraeger}" />
+				    <p:column headerText="Kostenträger" sortBy="#{azv.kostentraeger}">
+				        <h:outputText value="#{azv.kostentraeger}" />
 				    </p:column>
-				    <p:column headerText="%" sortBy="#{azv.prozentAnteil}">
-				        <h:outputText value="#{azv.prozentAnteil}" />
+				    <p:column headerText="%" sortBy="#{azv.prozentanteil}">
+				        <h:outputText value="#{azv.prozentanteil}" />
 				    </p:column>					    	
 				</p:dataTable>		
 		    </p:layoutUnit>

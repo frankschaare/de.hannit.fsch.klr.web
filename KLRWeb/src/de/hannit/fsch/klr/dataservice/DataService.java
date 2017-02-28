@@ -38,7 +38,10 @@ public ArrayList<Arbeitszeitanteil> getArbeitszeitanteile(int personalNummer);
 public ArrayList<Arbeitszeitanteil> getArbeitszeitanteileMAXMonat(int personalNummer);
 public ArrayList<Arbeitszeitanteil> getArbeitszeitanteile(int personalNummer, java.util.Date selectedMonth);
 public String[] getPersonalnummern();
+public Integer getPersonalnummer(AZVDatensatz azv);
+@Deprecated
 public Integer getPersonalnummer(String nachname);
+@Deprecated
 public Integer getPersonalnummer(String nachname, String username);
 public Integer getPersonalnummerbyUserName(String userName);
 public TreeMap<Integer, Mitarbeiter> getAZVMonat(java.util.Date selectedMonth);

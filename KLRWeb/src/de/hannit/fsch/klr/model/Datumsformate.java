@@ -12,6 +12,7 @@ public static DateTimeFormatter dfDatumUhrzeit = DateTimeFormatter.ofPattern("dd
 public static DateTimeFormatter DF_MONAT = DateTimeFormatter.ofPattern("MMMM");
 public static DateTimeFormatter DF_JAHR = DateTimeFormatter.ofPattern("yyyy");
 public static DateTimeFormatter DF_MONATJAHR = DateTimeFormatter.ofPattern("MMMM yyyy");
+public static DateTimeFormatter DF_JAHRMONAT = DateTimeFormatter.ofPattern("yyyyMM");
 public static DateTimeFormatter DF_JAHR_KURZ = DateTimeFormatter.ofPattern("yy");
 public static DateTimeFormatter dfDatumUhrzeitMax = DateTimeFormatter.ofPattern("EEEE', 'dd. MMMM yyyy HH:mm").withLocale(Locale.GERMAN);
 public static DateTimeFormatter dfUhrzeit = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss").withLocale(Locale.GERMAN);

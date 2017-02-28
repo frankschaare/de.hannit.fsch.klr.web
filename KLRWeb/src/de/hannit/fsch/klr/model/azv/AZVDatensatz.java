@@ -6,6 +6,8 @@ package de.hannit.fsch.klr.model.azv;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.hannit.fsch.klr.model.Constants;
+
 /**
  * @author fsch
  *
@@ -50,7 +52,7 @@ private Calendar cal = Calendar.getInstance();
 
 	}
 	
-	public String getUserName(){return userName;}
+	public String getUserName(){return userName == null ? "Unbekannt" : userName;}
 	public void setUserName(String userName){this.userName = userName;}
 
 	public void setBerichtsMonatAsString(String berichtsMonatAsString){this.berichtsMonatAsString = berichtsMonatAsString;}
@@ -199,6 +201,8 @@ private Calendar cal = Calendar.getInstance();
 	@Override
 	public void setNachname(String nachname) {this.strNachname = nachname;}
 
+	public void setVorname(String toSet) {this.strVorname = toSet;}
+	
 	@Override
 	public void setKostenArt(String incoming)
 	{
@@ -272,20 +276,17 @@ private Calendar cal = Calendar.getInstance();
 	{
 	this.eMail = eMail;
 	String[] parts = this.eMail.split("@");
-	this.strVorname = parts[0].split("\\.")[0];
+	this.strVorname = strVorname == null ? parts[0].split("\\.")[0] : strVorname;
 	
 	}
 	
 	public String getRowStyle() 
 	{
-		if (errors) 
+		if (getPersonalNummer() == 0) 
 		{
-		rowStyle = "rowStyleRed";	
+		rowStyle = Constants.CSS.ROWSTYLE_ORANGE;	
 		} 
-		else 
-		{
-		rowStyle = warnings ? "rowStyleOrange" : rowStyle;	
-		}
+
 	return rowStyle;
 	}
 	
