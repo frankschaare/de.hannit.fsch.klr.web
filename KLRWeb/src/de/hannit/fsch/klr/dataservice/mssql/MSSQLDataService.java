@@ -489,8 +489,57 @@ private Organisation hannit = null;
 	return e;
 	}
 	
-	
-	
+	@Override
+	public SQLException insertAZVDaten(ArrayList<AZVDatensatz> toInsert) 
+	{
+	SQLException e = null;	
+		
+		try 
+		{
+		con.setAutoCommit(false);	
+		ps = con.prepareStatement(PreparedStatements.INSERT_AZV);
+		
+			for (AZVDatensatz datenSatz : toInsert) 
+			{
+			ps.setInt(1, datenSatz.getPersonalNummer());
+			ps.setInt(2, datenSatz.getiTeam());
+			ps.setDate(3, datenSatz.getBerichtsMonatSQL());
+				
+				if (datenSatz.getKostenstelle() != null)
+				{
+				ps.setString(4, datenSatz.getKostenstelle());
+				ps.setNull(5, Types.NULL);
+				}
+				else
+				{
+				ps.setNull(4, Types.NULL);
+				ps.setString(5, datenSatz.getKostentraeger());
+				}
+			ps.setInt(6, datenSatz.getProzentanteil());				
+			ps.execute();
+			}
+		
+		con.commit();
+		con.setAutoCommit(true);	
+		} 
+		catch (SQLException exception) 
+		{
+		exception.printStackTrace();
+		e = exception;
+			try
+			{
+			con.rollback();
+			}
+			catch (SQLException e1)
+			{
+			e1.printStackTrace();
+			}
+		}	
+	return e;
+	}
+
+
+
 	@Override
 	public SQLException setAZVDaten(AZVDatensatz datenSatz)
 	{

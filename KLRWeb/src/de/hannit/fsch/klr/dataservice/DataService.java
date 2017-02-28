@@ -74,6 +74,7 @@ public boolean existsAZVDatensatz(int personalNummer, java.sql.Date berichtsMona
 public SQLException saveAZVChanges(TreeMap<String, Arbeitszeitanteil> unsavedChanges);
 public SQLException deleteAZVDaten(java.sql.Date datum);
 public SQLException setAZVDaten(AZVDatensatz datenSatz);
+public SQLException insertAZVDaten(ArrayList<AZVDatensatz> toInsert);
 public SQLException setAZVMonatsDaten(String kostenObjekt, String strDatum, double dSumme);
 public SQLException setVZAEMonatsDaten(String strDatum, String strTarifgruppe, double dSummeTarifgruppe, double dSummeStellen, double dVZAE);
 

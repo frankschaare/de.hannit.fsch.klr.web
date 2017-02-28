@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ private LocalDate requestAZVDate = null;
 private Date selectedDate = null;
 private int anzahlDaten = 0;
 private int anzahlFehler = 0;
+private long anfrageDauer = 0;
 
 private ListDataModel<AZVDatensatz> daten = null;
 private AZVDatensatz selectedRow = null;
@@ -164,7 +166,21 @@ private XPath xpath = xpathfactory.newXPath();
 	
 	public void save() 
 	{
-		
+	SQLException e = dataService.insertAZVDaten(azvDaten.getAzvMeldungen());
+	
+		if (e != null) 
+		{
+		detail = e.getLocalizedMessage();
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Speichern", detail);
+		FacesContext.getCurrentInstance().addMessage(null, message);			
+		} 
+		else 
+		{
+		detail = "Es wurden " + azvDaten.getAzvMeldungen().size() + " AZV Datensätze erfolgreich in der Datenbank gespeichert.";
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Erfolgreich gepeichert !", detail);
+		FacesContext.getCurrentInstance().addMessage(null, message);	
+		reset();
+		}
 	}
 	
     public void onRowSelect(SelectEvent event) 
@@ -231,7 +247,7 @@ private XPath xpath = xpathfactory.newXPath();
 		doc = webService.getResultList();
 		// write(doc);
 		Date end = new Date();
-		long anfrageDauer = end.getTime() - start.getTime();
+		setAnfrageDauer((end.getTime() - start.getTime()));
 		detail = "Anfrage an den OS/ECM Webservice wurde in " + String.valueOf(anfrageDauer) + " Millisekunden abgeschlossen.";	
 		log.log(Level.INFO, logPrefix + detail);	
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Anfrage erfolgreich !", detail);
@@ -492,5 +508,7 @@ private XPath xpath = xpathfactory.newXPath();
 	public void setConnectionInfo(String connectionInfo) {this.connectionInfo = connectionInfo;}
 	public int getAnzahlFehler() {return anzahlFehler;}
 	public void setAnzahlFehler(int anzahlFehler) {this.anzahlFehler = anzahlFehler;}
+	public long getAnfrageDauer() {return anfrageDauer;}
+	public void setAnfrageDauer(long anfrageDauer) {this.anfrageDauer = anfrageDauer;}
 		
 }
