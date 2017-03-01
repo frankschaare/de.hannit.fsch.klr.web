@@ -3,6 +3,7 @@ package de.hannit.fsch.klr.web.beans;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +22,7 @@ import de.hannit.fsch.common.Dezimalformate;
 import de.hannit.fsch.klr.dataservice.mssql.MSSQLDataService;
 import de.hannit.fsch.klr.model.Constants;
 import de.hannit.fsch.klr.model.Datumsformate;
+import de.hannit.fsch.klr.model.ICommand;
 import de.hannit.fsch.klr.model.loga.LoGaDatei;
 import de.hannit.fsch.klr.model.loga.LoGaDatensatz;
 import de.hannit.fsch.klr.model.mitarbeiter.Mitarbeiter;
@@ -33,6 +35,8 @@ public class LoGaImport implements Serializable
 private static final long serialVersionUID = -15869998202315851L;
 @ManagedProperty (value = "#{dataService}")
 private MSSQLDataService dataService;
+@ManagedProperty (value = "#{menuBar}")
+private MenuBar menuBar;
 private UploadedFile file = null;
 private LoGaDatei logaDatei = new LoGaDatei("");
 private final static Logger log = Logger.getLogger(LoGaImport.class.getSimpleName());	
@@ -49,12 +53,16 @@ private int anzahlWarnungen = 0;
 private boolean btnLoGaResetDisabled = true;
 private boolean btnLoGaUpdateDisabled = true;
 private boolean btnLoGaSpeichernDisbled = true;
+private List<ICommand> listeners = new ArrayList<ICommand>();
+private Mitarbeiter toChange = null;
 
 
 	public LoGaImport() 
 	{
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
+	menuBar = menuBar != null ? menuBar : fc.getApplication().evaluateExpressionGet(fc, "#{menuBar}", MenuBar.class);
+	addMitarbeiterChangedListener(menuBar.getCreateMitarbeiterCommand());
 	}
 	
 	public UploadedFile getFile() 
@@ -138,7 +146,13 @@ private boolean btnLoGaSpeichernDisbled = true;
     public void onRowSelect(SelectEvent event) 
     {
     LoGaDatensatz row =  (LoGaDatensatz) event.getObject();
-    //RequestContext.getCurrentInstance().execute("updateButtons();");
+    toChange = new Mitarbeiter();
+    toChange.setPersonalNR(row.getPersonalNummer());
+    
+	    for (ICommand listener : listeners)
+	    {
+	    listener.mitarbeiterChanged(toChange);	
+	    }    
     }
     
     public void deleteRow() 
@@ -313,9 +327,12 @@ private boolean btnLoGaSpeichernDisbled = true;
 	return logaDatei.getAbrechnungsMonat() != null ? Datumsformate.DF_MONATJAHR.format(logaDatei.getAbrechnungsMonat()) : "";	
 	}
 
+    public void addMitarbeiterChangedListener(ICommand newListener) {listeners.add(newListener);}
+	
 	public MSSQLDataService getDataService() {return dataService;}
 	public void setDataService(MSSQLDataService dataService) {this.dataService = dataService;}
-	
+	public MenuBar getMenuBar() {return menuBar;}
+	public void setMenuBar(MenuBar menuBar) {this.menuBar = menuBar;}	
 	public int getAnzahlDaten() {return anzahlDaten;}
 	public int getAnzahlErrors() {return anzahlErrors;}
 	public int getAnzahlWarnungen() {return anzahlWarnungen;}

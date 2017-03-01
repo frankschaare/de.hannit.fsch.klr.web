@@ -141,7 +141,7 @@
 				    <f:facet name="header">
 						<h:outputText value="LoGa Importdatei: #{loGaImport.file.fileName}" />
     				</f:facet>
-				    <p:ajax event="rowSelect" listener="#{loGaImport.onRowSelect}" />
+				    <p:ajax event="rowSelect" listener="#{loGaImport.onRowSelect}" process="@this" update="@(form)"/>
 				    <p:column headerText="Zeile" sortBy="#{loGaDatensatz.lineNumber}">
 				        <h:outputText value="#{loGaDatensatz.lineNumber}" />
 				    </p:column>

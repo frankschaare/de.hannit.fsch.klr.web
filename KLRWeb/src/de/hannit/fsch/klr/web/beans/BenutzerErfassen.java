@@ -3,7 +3,6 @@ package de.hannit.fsch.klr.web.beans;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +34,8 @@ private static final String BEARBEITEN = "Mitarbeiter bearbeiten:";
 
 @ManagedProperty (value = "#{dataService}")
 private MSSQLDataService dataService;
-
+@ManagedProperty (value = "#{menuBar}")
+private MenuBar menuBar;
 private final static Logger log = Logger.getLogger(BenutzerErfassen.class.getSimpleName());	
 private String logPrefix = null;	
 private FacesContext fc = null;
@@ -56,16 +56,11 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 	{
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
+	menuBar = menuBar != null ? menuBar : fc.getApplication().evaluateExpressionGet(fc, "#{menuBar}", MenuBar.class);
+
 	load();
-	
-	selectedMitarbeiter = new Mitarbeiter();
-	Map<String,String> params = fc.getExternalContext().getRequestParameterMap();
-		if (params.containsKey("personalNummer")) 
-		{
-		System.out.println("Parameter gefunden !");	
-		selectedMitarbeiter.setPersonalNR(Integer.parseInt(params.get("personalNummer")));	
-		}
-	setSelectedMitarbeiter(selectedMitarbeiter);
+
+	setSelectedMitarbeiter(menuBar.getCreateMitarbeiterCommand().getMitarbeiter() != null ? menuBar.getCreateMitarbeiterCommand().getMitarbeiter() : new Mitarbeiter());
 	}
 	
     public void onRowSelect(SelectEvent event) 
@@ -271,6 +266,8 @@ private String gridHeaderText = BenutzerErfassen.ERFASSEN;
 	public void setMitarbeiterModel(ListDataModel<Mitarbeiter> mitarbeiterModel) {this.mitarbeiterModel = mitarbeiterModel;}
 	public MSSQLDataService getDataService() {return dataService;}
 	public void setDataService(MSSQLDataService dataService) {this.dataService = dataService;}
+	public MenuBar getMenuBar() {return menuBar;}
+	public void setMenuBar(MenuBar menuBar) {this.menuBar = menuBar;}	
 	public Mitarbeiter getSelectedMitarbeiter() {return selectedMitarbeiter;}
 	public void setSelectedMitarbeiter(Mitarbeiter selectedMitarbeiter) {this.selectedMitarbeiter = selectedMitarbeiter;}
 	public boolean getBtnBenutzerAktualisierenDisabled() {return btnBenutzerAktualisierenDisabled;}

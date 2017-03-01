@@ -7,45 +7,46 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core">
 	
 	
-<h:form>  
-    <p:menubar>
-        <p:submenu label="#{ui['submenuFile']}" icon="menuDatei">
+<h:form id="menuForm">  
+    <p:menubar id="mainMenu">
+        <p:submenu id="subMenuDatei" label="#{ui['submenuFile']}" icon="menuDatei">
             <p:submenu label="New" icon="ui-icon-contact">
                 <p:menuitem value="Project" url="#" />
                 <p:menuitem value="Other" url="#" />
             </p:submenu>
-            <p:menuitem value="LoGa Import" action="/loga/LoGaImport.xhtml" icon="menuDateiLogaImport"/>
+            <p:menuitem id="menuitemLoGaImport" value="LoGa Import" action="/loga/LoGaImport.xhtml" icon="menuDateiLogaImport"/>
             <p:separator />
             <p:menuitem value="Quit" url="#" />
         </p:submenu>
  
-        <p:submenu label="  Benutzer" icon="menuUser">
-            <p:menuitem value="erfassen" action="/benutzer/erfassen.xhtml" icon="menuUserAdd" />
+        <p:submenu id="subMenuBenutzer" label="  Benutzer" icon="menuUser">
+            <p:menuitem id="menuitemBenutzerErfassen" value="erfassen" disabled="#{menuBar.createMitarbeiterCommand.disabled}" action="/benutzer/erfassen.xhtml" icon="menuUserAdd" />
             <p:menuitem value="Redo" url="#" icon="ui-icon-arrowreturnthick-1-e" />
         </p:submenu>
  
-        <p:submenu label="AZV" icon="menuAZVImport">
-            <p:menuitem value="Webservice" action="/azv/AZVImport.xhtml" icon="menuAZVWebservice" />
+        <p:submenu id="subMenuAZV" label="AZV" icon="menuAZVImport">
+            <p:menuitem id="menuitemWebservice" value="Webservice" action="/azv/AZVImport.xhtml" icon="menuAZVWebservice" />
         </p:submenu>
  
-        <p:submenu label="CSV" icon="menuCSV">
-	        <p:menuitem id="cmd01Entlastung0400" value="Export CSV01" disabled="#{menuBar.createCSV01Command.disabled}" url="#" icon="menuCSVCreate" />
-	        <p:menuitem id="cmd02Entlastung0400" value="Export CSV02" url="#" icon="menuCSVCreate" />
-	        <p:menuitem id="cmd03Entlastung0400" value="Export CSV03" url="#" icon="menuCSVCreate" />
-	        <p:menuitem id="cmd04Entlastung0400" value="Export CSV04" url="#" icon="menuCSVCreate" />	        
+        <p:submenu id="subMenuCSV" label="CSV" icon="menuCSV">
+	        <p:menuitem id="menuitem01Entlastung0400" value="Export CSV01" disabled="#{menuBar.createCSV01Command.disabled}" url="#" icon="menuCSVCreate" />
+	        <p:menuitem id="menuitem02Entlastung0400" value="Export CSV02" url="#" icon="menuCSVCreate" />
+	        <p:menuitem id="menuitem03Entlastung0400" value="Export CSV03" url="#" icon="menuCSVCreate" />
+	        <p:menuitem id="menuitem04Entlastung0400" value="Export CSV04" url="#" icon="menuCSVCreate" />	        
         </p:submenu>
  
-	    <p:menuitem id="btnStartseite" value="Startseite" url="/" icon="fa fa-home"/>
+	    <p:menuitem id="menuitemHome" value="Startseite" url="/" icon="fa fa-home"/>
  
         <f:facet name="options">
             <p:inputText style="margin-right:10px" placeholder="Search"/>
             <p:commandButton type="button" value="Logout" icon="ui-icon-extlink" />
         </f:facet>
     </p:menubar>
-    <p:tooltip id="cmd01Entlastung0400ToolTip" for="cmd01Entlastung0400" value="#{menuBar.createCSV01Command.toolTipText}" position="right"/>
-    <p:tooltip id="cmd02Entlastung0400ToolTip" for="cmd02Entlastung0400" value="Erstellt die Datei 02_Entlastung 0400 auf andere KTR" position="right"/>
-    <p:tooltip id="cmd03Entlastung0400ToolTip" for="cmd03Entlastung0400" value="Erstellt die Datei 03_Entlastung 0400 auf andere KTR" position="right"/>
-    <p:tooltip id="cmd04Entlastung0400ToolTip" for="cmd04Entlastung0400" value="Erstellt die Datei 04_Entlastung 0400 auf andere KTR" position="right"/>
+    <p:tooltip id="menuitemBenutzerErfassenToolTip" for="menuitemBenutzerErfassen" value="#{menuBar.createMitarbeiterCommand.toolTipText}" position="right"/>
+    <p:tooltip id="cmd01Entlastung0400ToolTip" for="menuitem01Entlastung0400" value="#{menuBar.createCSV01Command.toolTipText}" position="right"/>
+    <p:tooltip id="cmd02Entlastung0400ToolTip" for="menuitem02Entlastung0400" value="Erstellt die Datei 02_Entlastung 0400 auf andere KTR" position="right"/>
+    <p:tooltip id="cmd03Entlastung0400ToolTip" for="menuitem03Entlastung0400" value="Erstellt die Datei 03_Entlastung 0400 auf andere KTR" position="right"/>
+    <p:tooltip id="cmd04Entlastung0400ToolTip" for="menuitem04Entlastung0400" value="Erstellt die Datei 04_Entlastung 0400 auf andere KTR" position="right"/>
    
 </h:form>
 

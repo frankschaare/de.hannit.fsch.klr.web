@@ -2,6 +2,7 @@ package de.hannit.fsch.klr.web.commands;
 
 import de.hannit.fsch.common.MonatsSummen;
 import de.hannit.fsch.klr.model.ICommand;
+import de.hannit.fsch.klr.model.mitarbeiter.Mitarbeiter;
 
 public class CreateCSV01Command implements ICommand
 {
@@ -38,6 +39,15 @@ private String toolTipText = TTT_DISABLED;
 	public MonatsSummen getMonatsSummen() {return monatsSummen;}
 	public void setMonatsSummen(MonatsSummen toSet) {this.monatsSummen = toSet;}
 	public String getToolTipText() {return toolTipText;}
+
+	@Override
+	public void mitarbeiterChanged(Mitarbeiter incoming) {}
+
+	@Override
+	public void setMitarbeiter(Mitarbeiter toSet) {}
+
+	@Override
+	public Mitarbeiter getMitarbeiter() {return null;}
 	
 	
 
