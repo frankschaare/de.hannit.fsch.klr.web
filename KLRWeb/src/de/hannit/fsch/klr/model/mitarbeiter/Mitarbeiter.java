@@ -41,6 +41,7 @@ private ArrayList<Arbeitszeitanteil> arbeitszeitAnteile = null;
 private ArrayList<TeamMitgliedschaft> teamMitgliedschaften = null;
 private TreeMap<String, Arbeitszeitanteil> azvMonat = null;
 private boolean azvAktuell = true;
+private String rowStyle = null;
 
 /*
  * Wird benutzt, um das passende Icon im Navigationsbaum anzuzeigen
@@ -377,7 +378,20 @@ private int azvProzentSumme = 0;
 	return typ;
 	}
 
-	
+	public String getRowStyle() 
+	{
+		if (getPersonalNR() == 0) 
+		{
+		rowStyle = Constants.CSS.ROWSTYLE_RED;	
+		} 
+
+		if (getBenutzerName().equals(Constants.DUMMIES.DUMMY_USERNAME)) 
+		{
+		rowStyle = Constants.CSS.ROWSTYLE_ORANGE;	
+		} 		
+		
+	return rowStyle;
+	}	
 	
 	
 }

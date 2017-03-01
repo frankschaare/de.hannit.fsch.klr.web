@@ -98,7 +98,7 @@
 	
 		    </p:layoutUnit>
 	    <p:layoutUnit id="dbMitarbeiterUnit" position="center" size="800">
-	    	<p:dataTable id="dataTableMitarbeiter" var="mitarbeiter" value="#{benutzerErfassen.mitarbeiterModel}" selectionMode="single" selection="#{benutzerErfassen.selectedMitarbeiter}" rowKey="#{mitarbeiter.personalNR}">
+	    	<p:dataTable id="dataTableMitarbeiter" var="mitarbeiter" value="#{benutzerErfassen.mitarbeiterModel}" selectionMode="single" selection="#{benutzerErfassen.selectedMitarbeiter}" rowStyleClass="#{mitarbeiter.rowStyle}" rowKey="#{mitarbeiter.personalNR}">
 			    <f:facet name="header">
 					<h:outputText value="Aktuell in der Datenbank vorhandene Mitarbeiter" />
     			</f:facet>

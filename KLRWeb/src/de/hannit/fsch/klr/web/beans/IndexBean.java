@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +23,7 @@ import org.primefaces.model.TreeNode;
 import de.hannit.fsch.common.MonatsSummen;
 import de.hannit.fsch.klr.dataservice.mssql.MSSQLDataService;
 import de.hannit.fsch.klr.model.Datumsformate;
+import de.hannit.fsch.klr.model.ICommand;
 import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
 import de.hannit.fsch.klr.model.kostenrechnung.Kostenrechnungsobjekt;
 import de.hannit.fsch.klr.model.mitarbeiter.GemeinKosten;
@@ -40,6 +42,8 @@ public class IndexBean implements Serializable
 private static final long serialVersionUID = 4726044687673797206L;
 @ManagedProperty (value = "#{dataService}")
 private MSSQLDataService dataService;
+@ManagedProperty (value = "#{menuBar}")
+private MenuBar menuBar;
 @ManagedProperty (value = "#{indexSelectOneController}")
 private IndexSelectOneController indexSelectOneController;
 private final static Logger log = Logger.getLogger(IndexBean.class.getSimpleName());	
@@ -57,6 +61,7 @@ private ListDataModel<Kostenrechnungsobjekt> gesamt = null;
 private ListDataModel<Kostenrechnungsobjekt> gesamtKTR = null;
 private ListDataModel<Kostenrechnungsobjekt> gesamtKST = null;
 private ListDataModel<Tarifgruppe> tarifgruppenListe = null;
+private List<ICommand> listeners = new ArrayList<ICommand>();
 
 
 /**
@@ -74,6 +79,8 @@ private double vzaeTotal = 0;
 	{
 	fc = FacesContext.getCurrentInstance();
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
+	menuBar = menuBar != null ? menuBar : fc.getApplication().evaluateExpressionGet(fc, "#{menuBar}", MenuBar.class);
+	listeners.add(menuBar.getCreateCSV01Command());
 	indexSelectOneController = indexSelectOneController != null ? indexSelectOneController : fc.getApplication().evaluateExpressionGet(fc, "#{indexSelectOneController}", IndexSelectOneController.class);
 
 	hannit = new Organisation();
@@ -257,6 +264,8 @@ private double vzaeTotal = 0;
 		{
 		mSumme.setChecked(true);
 		mSumme.setSummeOK(true);
+		notifyMonatsSummenListeners(mSumme);
+
 		pdk.setChecked(true);
 		pdk.setDatenOK(true);
 		gk.setChecked(true);
@@ -270,6 +279,8 @@ private double vzaeTotal = 0;
 		{
 		mSumme.setChecked(true);
 		mSumme.setSummeOK(false);
+		notifyMonatsSummenListeners(mSumme);
+		
 		pdk.setChecked(true);
 		pdk.setDatenOK(false);
 		gk.setChecked(true);
@@ -292,6 +303,8 @@ private double vzaeTotal = 0;
 	public void setDataService(MSSQLDataService dataService) {this.dataService = dataService;}
 	public IndexSelectOneController getIndexSelectOneController() {return indexSelectOneController;}
 	public void setIndexSelectOneController(IndexSelectOneController indexSelectOneController) {this.indexSelectOneController = indexSelectOneController;}
+	public MenuBar getMenuBar() {return menuBar;}
+	public void setMenuBar(MenuBar menuBar) {this.menuBar = menuBar;}
 
 	public ListDataModel<Kostenrechnungsobjekt> getMonatsGesamtSummen() 
 	{
@@ -324,5 +337,15 @@ private double vzaeTotal = 0;
 	{
 	return tarifgruppen;
 	}
+	
+    private void notifyMonatsSummenListeners(MonatsSummen incoming) 
+    {
+        for (ICommand listener : listeners)
+        {
+        listener.monatsSummenChanged(incoming);	
+        }
+    }
+	
+    public void addMonatsSummenListener(ICommand newListener) {listeners.add(newListener);}
 
 }

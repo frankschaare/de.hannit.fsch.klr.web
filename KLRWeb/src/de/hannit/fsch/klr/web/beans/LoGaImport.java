@@ -200,9 +200,9 @@ private boolean btnLoGaSpeichernDisbled = true;
 			ds.setWarnings(true);
 			Mitarbeiter neu = new Mitarbeiter();
 			neu.setPersonalNR(ds.getPersonalNummer());
-			neu.setBenutzerName("UNBEKANNT");
-			neu.setNachname("NACHTRAGEN !");
-			neu.setVorname("BITTE");
+			neu.setBenutzerName(Constants.DUMMIES.DUMMY_USERNAME);
+			neu.setNachname(Constants.DUMMIES.DUMMY_NACHNAME);
+			neu.setVorname(Constants.DUMMIES.DUMMY_VORNAME);
 			SQLException e = dataService.setMitarbeiter(neu);
 			
 				if (e == null) 

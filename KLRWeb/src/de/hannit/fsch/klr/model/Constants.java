@@ -102,6 +102,16 @@ public class Constants
 	}
 
 	/**
+	 * Dummy Strings
+	 */
+	public static interface DUMMIES 
+	{
+	public static final String DUMMY_USERNAME = "UNBEKANNT";
+	public static final String DUMMY_VORNAME = "NACHTRAGEN !";
+	public static final String DUMMY_NACHNAME = "BITTE";
+	}
+	
+	/**
 	 * CSS Styleklassen
 	 */
 	public static interface CSS 

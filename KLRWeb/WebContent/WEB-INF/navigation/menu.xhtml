@@ -8,8 +8,6 @@
 	
 	
 <h:form>  
-    <p:growl id="messages" showDetail="true" />
- 
     <p:menubar>
         <p:submenu label="#{ui['submenuFile']}" icon="menuDatei">
             <p:submenu label="New" icon="ui-icon-contact">
@@ -30,23 +28,25 @@
             <p:menuitem value="Webservice" action="/azv/AZVImport.xhtml" icon="menuAZVWebservice" />
         </p:submenu>
  
-        <p:submenu label="Actions" icon="ui-icon-gear">
-            <p:submenu label="Ajax" icon="ui-icon-refresh">
-                <p:menuitem value="Save" actionListener="#{menuView.save}" icon="ui-icon-disk" update="messages"/>
-                <p:menuitem value="Update" actionListener="#{menuView.update}" icon="ui-icon-arrowrefresh-1-w" update="messages"/>
-            </p:submenu>
-            <p:submenu label="Non-Ajax" icon="ui-icon-newwin">
-                <p:menuitem value="Delete" actionListener="#{menuView.delete}" icon="ui-icon-close" update="messages" ajax="false"/>
-            </p:submenu>
+        <p:submenu label="CSV" icon="menuCSV">
+	        <p:menuitem id="cmd01Entlastung0400" value="Export CSV01" disabled="#{menuBar.createCSV01Command.disabled}" url="#" icon="menuCSVCreate" />
+	        <p:menuitem id="cmd02Entlastung0400" value="Export CSV02" url="#" icon="menuCSVCreate" />
+	        <p:menuitem id="cmd03Entlastung0400" value="Export CSV03" url="#" icon="menuCSVCreate" />
+	        <p:menuitem id="cmd04Entlastung0400" value="Export CSV04" url="#" icon="menuCSVCreate" />	        
         </p:submenu>
  
-        <p:menuitem value="Quit" url="http://www.primefaces.org" icon="ui-icon-close" />
+	    <p:menuitem id="btnStartseite" value="Startseite" url="/" icon="fa fa-home"/>
  
         <f:facet name="options">
             <p:inputText style="margin-right:10px" placeholder="Search"/>
             <p:commandButton type="button" value="Logout" icon="ui-icon-extlink" />
         </f:facet>
     </p:menubar>
+    <p:tooltip id="cmd01Entlastung0400ToolTip" for="cmd01Entlastung0400" value="#{menuBar.createCSV01Command.toolTipText}" position="right"/>
+    <p:tooltip id="cmd02Entlastung0400ToolTip" for="cmd02Entlastung0400" value="Erstellt die Datei 02_Entlastung 0400 auf andere KTR" position="right"/>
+    <p:tooltip id="cmd03Entlastung0400ToolTip" for="cmd03Entlastung0400" value="Erstellt die Datei 03_Entlastung 0400 auf andere KTR" position="right"/>
+    <p:tooltip id="cmd04Entlastung0400ToolTip" for="cmd04Entlastung0400" value="Erstellt die Datei 04_Entlastung 0400 auf andere KTR" position="right"/>
+   
 </h:form>
 
 </ui:composition>

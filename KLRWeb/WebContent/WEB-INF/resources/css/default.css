@@ -68,6 +68,18 @@ body {
    	background-image:url(#{resource['/images/tableImport16px.png']}) !important;
 }
 
+.menuCSV
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/CSVGreen.png']}) !important;
+}
+
+.menuCSVCreate
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/Logging16x16.png']}) !important;
+}
+
 .buttonResetDefault
 {
 	padding-right: 3px;
