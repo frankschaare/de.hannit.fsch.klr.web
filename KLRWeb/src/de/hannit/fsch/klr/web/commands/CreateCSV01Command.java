@@ -10,6 +10,7 @@ private MonatsSummen monatsSummen = null;
 private final String TTT_ENABLED = "Erstellt die Buchungssätze für die Datei 01_Entlastung 0400 auf andere KST";
 private final String TTT_DISABLED = "Nicht verfügbar, da die Monatssumme der Kostenstellen / Kostenträger nicht der Monatssumme der Vollzeitäquivalente entspricht.";
 private String toolTipText = TTT_DISABLED;
+private boolean disabled = false;
 
 	public CreateCSV01Command() 
 	{
@@ -22,12 +23,14 @@ private String toolTipText = TTT_DISABLED;
 	setMonatsSummen(incoming);	
 	}
 
+	public void setDisabled(boolean toSet) 
+	{
+	this.disabled = toSet;
+	}
+
 	@Override
 	public boolean getDisabled() 
 	{
-	boolean disabled = true;
-	toolTipText = TTT_DISABLED;
-		
 		if (monatsSummen != null && monatsSummen.isChecked() && monatsSummen.getSummeOK())
 		{
 		disabled = false;
@@ -37,7 +40,15 @@ private String toolTipText = TTT_DISABLED;
 	}
 
 	public MonatsSummen getMonatsSummen() {return monatsSummen;}
-	public void setMonatsSummen(MonatsSummen toSet) {this.monatsSummen = toSet;}
+	public void setMonatsSummen(MonatsSummen toSet) 
+	{
+	this.monatsSummen = toSet;
+		if (monatsSummen != null && monatsSummen.isChecked() && monatsSummen.getSummeOK())
+		{
+		disabled = false;
+		toolTipText = TTT_ENABLED;
+		}
+	}
 	public String getToolTipText() {return toolTipText;}
 
 	@Override

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:view contentType="text/html">
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>HannIT KLR</title>
+	<f:facet name="last">
+		<h:outputStylesheet library="css" name="default.css" target="head" />
+  	</f:facet>
+</h:head>
+<h:body>
+
+	<p:layout id="CSV01Layout" fullPage="true">
+ 
+	    <p:layoutUnit id="menuBar" position="north" size="45" resizable="true" styleClass="menu">
+	        <ui:include src="/WEB-INF/navigation/menu.xhtml" />
+	    </p:layoutUnit>
+	 
+	    <p:layoutUnit id="csv01Controls" position="west" size="440" resizable="true" >
+	    	<p:layout>
+			    <p:layoutUnit position="north">
+	        		<ui:include src="/WEB-INF/navigation/csv01Controls.xhtml" />
+			    </p:layoutUnit>
+	    	
+			    <p:layoutUnit position="center">
+	        		<p:messages id="msgs" showDetail="true" globalOnly="true"/>
+			    </p:layoutUnit>
+	        </p:layout>
+	    </p:layoutUnit>
+	 
+	    <p:layoutUnit id="detailsView" position="center">
+	        <ui:include src="/WEB-INF/pages/csv01Details.xhtml" />
+	    </p:layoutUnit>
+ 
+	</p:layout>
+		
+</h:body>
+</f:view>
+</html>

@@ -4,6 +4,7 @@
 package de.hannit.fsch.common;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -11,6 +12,7 @@ import de.hannit.fsch.klr.model.Datumsformate;
 import de.hannit.fsch.klr.model.azv.Arbeitszeitanteil;
 import de.hannit.fsch.klr.model.kostenrechnung.Kostenrechnungsobjekt;
 import de.hannit.fsch.klr.model.mitarbeiter.Mitarbeiter;
+import de.hannit.fsch.util.DateUtility;
 
 /**
  * @author fsch
@@ -90,6 +92,11 @@ private Date berichtsMonat = null;
 	public String getBerichtsMonat()
 	{
 	return Datumsformate.STANDARDFORMAT_SQLSERVER.format(berichtsMonat);
+	}
+	
+	public LocalDate getBerichtsMonatAsLocalDate()
+	{
+	return berichtsMonat != null ? DateUtility.asLocalDate(berichtsMonat) : null;
 	}
 	
 	public Date getBerichtsMonatAsDate()

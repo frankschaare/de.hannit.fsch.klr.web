@@ -117,7 +117,11 @@ public class Constants
 	public static interface CSS 
 	{
 	public static final String ROWSTYLE_RED = "rowStyleRed";
+	public static final String ROWSTYLE_ENTNAME = "rowStyleEntname";
+	public static final String ROWSTYLE_GUTSCHRIFT = "rowStyleGutschrift";
 	public static final String ROWSTYLE_ORANGE = "rowStyleOrange";
+	public static final String ROWSTYLE_NOTNEW = "rowStyleNotNew";
+
 	}	
 	
 	/**

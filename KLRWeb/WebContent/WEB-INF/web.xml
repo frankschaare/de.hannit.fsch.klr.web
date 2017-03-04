@@ -40,6 +40,11 @@
     <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
     <param-value>resources.application</param-value>
   </context-param>
+  <context-param>
+  	<description>In diesem Ordner werden generierte Dateien gespeichert</description>
+	<param-name>de.hannit.fsch.klr.web.DOWNLOAD_FOLDER</param-name>
+	<param-value>/tmp</param-value>
+	</context-param>  
   <listener>
     <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
   </listener>

@@ -1,0 +1,56 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	
+	
+	<p:layout>
+ 
+ 	    <p:layoutUnit id="csv01DetailsNorth" position="north">
+ 	    	<p:outputLabel id="labelDateiInfo" value="#{createCSV01.csvDatei.dateiInfo}" style="padding:10px 10px;" />
+	    </p:layoutUnit>
+	    
+	    <p:layoutUnit position="center">
+	    
+			<p:dataTable id="dataTableCSV01Neu" var="zeile" value="#{createCSV01.csvDatei.zeilenAsList}" rowStyleClass="#{zeile.rowStyle}">
+			    <f:facet name="header">
+					<h:outputText value="#{createCSV01.csvDatei.dataTableHeader}" />				   
+				 </f:facet>
+			 
+			    <p:column headerText="#{ui['csv01TableColumn1']}" style="text-align: center;">
+			        <h:outputText value="#{zeile.getWert(1)}" />
+			    </p:column>
+			    
+			    <p:column headerText="#{ui['csv01TableColumn2']}" style="text-align: center;">
+			        <h:outputText value="#{zeile.getWert(2)}" />
+			    </p:column>	
+			    
+			    <p:column headerText="#{ui['csv01TableColumn3']}" style="text-align: center;">
+			        <h:outputText value="#{zeile.getWert(3)}" />
+			    </p:column>		
+			    
+			    <p:column headerText="#{ui['csv01TableColumn4']}" style="text-align: center;">
+			        <h:outputText value="#{zeile.getWert(4)}" />
+			    </p:column>	
+			    
+			     <p:column headerText="#{ui['csv01TableColumn5']}" style="text-align: center;">
+			        <h:outputText value="#{zeile.getWert(5)}" />
+			    </p:column>	
+			    
+			    <p:column headerText="#{ui['csv01TableColumn6']}" style="text-align: center;">
+			        <h:outputText value="#{zeile.getWert(6)}" />
+			    </p:column>		
+			    
+			    <p:column headerText="#{ui['csv01TableColumn7']}" style="text-align: right; padding: 4px 60px;">
+			        <h:outputText value="#{zeile.getWert(7)}" />
+			    </p:column>	
+			</p:dataTable>					
+	    
+	    </p:layoutUnit>
+
+	</p:layout>
+
+</ui:composition>

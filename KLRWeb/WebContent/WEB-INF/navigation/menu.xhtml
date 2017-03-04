@@ -29,10 +29,10 @@
         </p:submenu>
  
         <p:submenu id="subMenuCSV" label="CSV" icon="menuCSV">
-	        <p:menuitem id="menuitem01Entlastung0400" value="Export CSV01" disabled="#{menuBar.createCSV01Command.disabled}" url="#" icon="menuCSVCreate" />
-	        <p:menuitem id="menuitem02Entlastung0400" value="Export CSV02" url="#" icon="menuCSVCreate" />
-	        <p:menuitem id="menuitem03Entlastung0400" value="Export CSV03" url="#" icon="menuCSVCreate" />
-	        <p:menuitem id="menuitem04Entlastung0400" value="Export CSV04" url="#" icon="menuCSVCreate" />	        
+	        <p:menuitem id="menuitem01Entlastung0400" value="Export CSV01" disabled="#{menuBar.createCSV01Command.disabled}" action="/csv/CSV01.xhtml" icon="menuCSVCreate" />
+	        <p:menuitem id="menuitem02Entlastung0400" value="Export CSV02" disabled="true" url="#" icon="menuCSVCreate" />
+	        <p:menuitem id="menuitem03Entlastung0400" value="Export CSV03" disabled="true" icon="menuCSVCreate" />
+	        <p:menuitem id="menuitem04Entlastung0400" value="Export CSV04" disabled="true" icon="menuCSVCreate" />	        
         </p:submenu>
  
 	    <p:menuitem id="menuitemHome" value="Startseite" url="/" icon="fa fa-home"/>

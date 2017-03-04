@@ -16,6 +16,27 @@ body {
 	border-collapse: separate !important;
 }
 
+.rowStyleNotNew {
+    border-color: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #a6a6a6 !important;
+}
+
+.rowStyleGutschrift {
+    border-color: #e6ffe6 !important;
+    background-color: #e6ffe6 !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
+
+.rowStyleEntname {
+	border-color: #ffe6e6 !important;
+    background-color: #ffe6e6 !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
+
 .rowStyleOrange {
     background-color: #fca752 !important;
     background-image: none !important;
@@ -78,6 +99,12 @@ body {
 {
 	padding-right: 3px;
    	background-image:url(#{resource['/images/Logging16x16.png']}) !important;
+}
+
+.menuCSVAddLines
+{
+	padding-right: 3px;
+   	background-image:url(#{resource['/images/addLines16x16.png']}) !important;
 }
 
 .buttonResetDefault

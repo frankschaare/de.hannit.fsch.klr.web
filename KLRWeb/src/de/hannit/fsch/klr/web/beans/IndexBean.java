@@ -81,6 +81,7 @@ private double vzaeTotal = 0;
 	dataService = dataService != null ? dataService : fc.getApplication().evaluateExpressionGet(fc, "#{dataService}", MSSQLDataService.class);
 	menuBar = menuBar != null ? menuBar : fc.getApplication().evaluateExpressionGet(fc, "#{menuBar}", MenuBar.class);
 	addMonatsSummenListener(menuBar.getCreateCSV01Command());
+	addMonatsSummenListener(menuBar);
 	indexSelectOneController = indexSelectOneController != null ? indexSelectOneController : fc.getApplication().evaluateExpressionGet(fc, "#{indexSelectOneController}", IndexSelectOneController.class);
 
 	hannit = new Organisation();

@@ -1,0 +1,32 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	
+	
+	<h:form id="formEdit">
+		<p:panelGrid id="benutzerErfassenGrid" style="width: 100%; border-collapse: separate;">
+			<f:facet name="header">
+				<p:row>
+					<p:column colspan="7"><p:outputLabel id="gridHeaderText" value="HeaderText"/></p:column>
+				</p:row>				    
+		    </f:facet>
+			 	<p:row>
+			 		<p:column>
+			 			<p:commandButton id="btnAktualisieren" value="ergänzen" disabled="#{createCSV01.btnAktualisierenDisabled}"  icon="menuCSVAddLines"/>
+			 		</p:column>
+			 		<p:column>
+					 	<p:commandButton id="btnSpeichern" value="speichern" actionListener="#{createCSV01.write}" process="@this" update="@(form) labelDateiInfo dataTableCSV01Neu msgs" disabled="#{createCSV01.btnSpeichernDisabled}" icon="fa fa-save"/>		 		
+			 		</p:column>
+			 		<p:column style="width: 40%; padding: 30px 0px;">
+					 	<p:commandButton id="btnDownload" value="download" disabled="#{createCSV01.btnDownloadDisabled}" icon="fa fa-download" />		 		
+			 		</p:column>
+			 	</p:row>
+				 	
+		</p:panelGrid>
+	</h:form>
+
+</ui:composition>

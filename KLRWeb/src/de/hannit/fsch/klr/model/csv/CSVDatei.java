@@ -13,7 +13,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +33,9 @@ public class CSVDatei extends File
 private static final long serialVersionUID = 7390814932872973058L;
 public static final String DEFAULT_DELIMITER = ";";
 public static final String PATH_PRÄFIX = "C:\\temp\\";
+public static final String DATEI_NICHTVORHANDEN = "Keine DateiInfo verfügbar.";
 
-private Charset charset = Charset.forName("ISO-8859-1");
+
 private List<String> lines;
 /**
  * Felder aus gelesenen Dateien
@@ -50,8 +50,11 @@ private ArrayList<String> content = null;
  */
 private ArrayList<String> completeContent = null;
 
+protected String dateiInfo = "";
 protected String dateiName = null;
 protected Path dateiPfad = null;
+protected boolean dateiVorhanden = false;
+
 
 protected boolean hasHeader = true;
 protected boolean errors = false;
@@ -65,6 +68,7 @@ protected boolean checked = false;
 protected boolean saved = false;
 protected String delimiter = ";";
 protected int lineCount = -1;
+
 
 	/**
 	 * @param arg0
@@ -87,20 +91,6 @@ protected int lineCount = -1;
 	{
 	super(strPath, strName);
 	this.dateiName = strName;
-	
-		/*
-		 * Existiert die Zieldatei bereits, werden die vorhandenen Zeilen eingelesen.
-		 * Diese werden später im Part ausgegraut dargestellt. 
-		 */
-		if (existsZielDatei())
-		{
-		completeContent = new ArrayList<String>();	
-		read();	
-			for (String line : lines)
-			{
-			completeContent.add(line);	
-			}
-		}
 	}
 
 	/**
@@ -209,26 +199,10 @@ protected int lineCount = -1;
 		}		
 	}	
 	
-	public void write() 
+	public boolean write() 
 	{
-		if (Files.exists(this.toPath(), new LinkOption[]{LinkOption.NOFOLLOW_LINKS}))
-		{
-		//log.error("CSV-Datei " + this.getPath() + " existiert bereits ! Bitte prüfen und ggf. manuell löschen.", this.getClass().getName() + ".write()", null);	
-		}
-		else
-		{
-			try
-			{
-			Files.createFile(this.toPath());
-			Files.write(this.toPath(), getContent(), Charset.forName("ISO-8859-15"), StandardOpenOption.WRITE);
-			//log.confirm("Datei " + this.getPath() + " wurde erfolgreich geschrieben.", this.getClass().getName() + ".write()");
-			}
-			catch (IOException e)
-			{
-			//log.error("Datei " + this.toPath() + " konnte nicht erstellt werde. !", this.getClass().getName() + ".write()", e);	
-			e.printStackTrace();
-			}	
-		}		
+	return false;
+	
 	}
 	
 	public void read(UploadedFile file) 
@@ -266,33 +240,7 @@ protected int lineCount = -1;
 	
 	public void read() 
 	{
-	lineCount = 1;
-		try 
-		{
-		lines = Files.readAllLines(Paths.get(super.getPath()), charset);
-			for (String line : lines)
-			{
-			switch (lineCount) 
-			{
-			// Erste Zeile wird nur verarbeitet wenn keine Kopfzeile vorhanden ist
-			case 1:
-				if (!hasHeader) 
-				{
-				fields.add(line.split(delimiter));	
-				}
-			break;
-
-			default:
-			fields.add(line.split(delimiter));
-			break;
-			}	
-			lineCount++;
-			}	
-		} 
-		catch (IOException e) 
-		{
-		e.printStackTrace();	
-		}
+	
 	}
 	
 	public boolean isChecked(){return checked;}
@@ -320,9 +268,9 @@ protected int lineCount = -1;
 		return hasHeader;
 	}
 
-	public void hasHeader(boolean hasHeader) 
+	public void hasHeader(boolean toSet) 
 	{
-		this.hasHeader = hasHeader;
+	this.hasHeader = toSet;
 	}
 
 	public String getDelimiter() {
@@ -345,7 +293,12 @@ protected int lineCount = -1;
 		}
 	}
 
-	public void setLineCount(int lineCount) {
-		this.lineCount = lineCount;
-	}
+	public void setLineCount(int lineCount) {this.lineCount = lineCount;}
+
+	public String getDateiInfo() {return dateiInfo;}
+	public void setDateiInfo(String dateiInfo) {this.dateiInfo = dateiInfo;}
+	public boolean isDateiVorhanden() {return dateiVorhanden;}
+	public void setDateiVorhanden(boolean dateiVorhanden) {this.dateiVorhanden = dateiVorhanden;}
+	
+	
 }
