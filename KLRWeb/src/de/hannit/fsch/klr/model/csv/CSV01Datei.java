@@ -14,6 +14,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +39,8 @@ private String logPrefix = null;
 private FacesMessage msg = null;
 private String detail = null;
 public static final int CSVFELD_DATUMSINDEX = 1;
+public static final int CSVFELD_ENTLASTUNGSINDEX = 7;
+public static final int CSVZEILE_ENTLASTUNGSZEILE = 1;
 
 public static final String ZELLE2_NEHME = "0";
 public static final String ZELLE2_GEBE = "1";
@@ -68,7 +71,7 @@ private Zeitraum berichtsZeitraum = null;
  * So kann geprüft werden, ob alles vollständig ist, oder ob bestimmte Zeilen 
  * schon vorhanden sind.
  */
-private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
+private TreeMap<LocalDate, MonatsCSV01Zeilen> monatsZeilen = null;
 
 	/**
 	 * @param arg0
@@ -122,16 +125,16 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 	public CSVFeld getConstFeld4Neme() {return constFeld4Neme;}
 	public CSVFeld getConstFeld4Gebe() {return constFeld4Gebe;}
 	public Zeitraum getBerichtsZeitraum() {return berichtsZeitraum;}
-	public TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> getMonatsZeilen() {return monatsZeilen;}
+	public TreeMap<LocalDate, MonatsCSV01Zeilen> getMonatsZeilen() {return monatsZeilen;}
 	
 	public void setBerichtsZeitraum(Zeitraum toSet) 
 	{
 	this.berichtsZeitraum = toSet;
 	this.monatsZeilen = new TreeMap<>();
 	
-		for (LocalDate berichtsMonat : berichtsZeitraum.getAuswertungsQuartal().getBerichtsMonate().values()) 
+		for (Entry<Integer, LocalDate> entry : berichtsZeitraum.getAuswertungsQuartal().getBerichtsMonate().entrySet()) 
 		{
-		monatsZeilen.put(berichtsMonat, new TreeMap<Integer, CSV01Zeile>());	
+		monatsZeilen.put(entry.getValue(), new MonatsCSV01Zeilen(entry.getValue(), entry.getKey()));	
 		}
 	}
 	
@@ -143,17 +146,56 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 	
 	public ArrayList<CSV01Zeile> getZeilenAsList()
 	{
-	ArrayList<CSV01Zeile> result = new ArrayList<>();	
-		for (TreeMap<Integer, CSV01Zeile> map : getMonatsZeilen().values()) 
+	ArrayList<CSV01Zeile> result = new ArrayList<>();
+		for (MonatsCSV01Zeilen mz : monatsZeilen.values()) 
 		{
-			for (CSV01Zeile csv01Zeile : map.values()) 
+			for (CSV01Zeile csv01Zeile : mz.getZeilen().values()) 
 			{
 			result.add(csv01Zeile);	
 			}
 		}
-	return result;
+	return result;	
 	}
 	
+	@Override
+	public boolean append() 
+	{
+	boolean success = false;	
+	logPrefix = this.getClass().getName() + ".append(): ";
+	fc = FacesContext.getCurrentInstance();
+	
+		if (!Files.exists(this.toPath(), new LinkOption[]{LinkOption.NOFOLLOW_LINKS}))
+		{
+		detail = "CSV-Datei " + this.getPath() + " wurde nicht gefunden !";
+		log.log(Level.SEVERE, logPrefix + detail);
+		msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Ergänzen der Datei !", detail);
+		fc.addMessage(null, msg);
+		}
+		else
+		{
+			try
+			{
+			Files.write(this.toPath(), getContent(), Charset.forName("ISO-8859-15"), StandardOpenOption.APPEND);
+			detail = "Datei " + this.getPath() + " wurde erfolgreich ergänzt.";
+			log.log(Level.INFO, logPrefix + detail);
+			msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Datei erfolgreich ergänzt.", detail);
+			fc.addMessage(null, msg);
+
+			success = true;
+			}
+			catch (IOException e)
+			{
+			detail = e.getLocalizedMessage();
+			log.log(Level.SEVERE, logPrefix + detail);
+			msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Ergänzen der Datei !", detail);
+			fc.addMessage(null, msg);
+
+			e.printStackTrace();
+			}	
+		}
+	return success;		
+	}
+
 	@Override
 	public boolean write() 
 	{
@@ -210,7 +252,11 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 		
 		for (CSV01Zeile zeile : getZeilenAsList()) 
 		{
-		toWrite.add(zeile.getFormattedLine());	
+			if (zeile.getIsnew()) 
+			{
+			toWrite.add(zeile.getFormattedLine());
+			zeile.setIsnew(false);
+			}
 		}
 	return toWrite;
 	}
@@ -235,18 +281,29 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 		setDateiInfo(CSVDatei.DATEI_NICHTVORHANDEN);
 		}		
 	}
+	
+	public int getEmptyMonatsMaps()
+	{
+	int result = 0;	
+		for (MonatsCSV01Zeilen zeilen : getMonatsZeilen().values()) 
+		{
+			if (zeilen.isEmpty()) 
+			{
+			result++;	
+			} 
+		}	
+	return result;	
+	}
 
 	public String getDataTableHeader()
 	{
 	String result = getBerichtsZeitraum().getAuswertungsQuartal().getBezeichnungLang() + ": ";
 		
-		TreeMap<Integer, CSV01Zeile> map = null;
 		int vorhanden = 0;
 		int verfuegbar = 0;
-		for (LocalDate date : getMonatsZeilen().keySet()) 
+		for (MonatsCSV01Zeilen mz : getMonatsZeilen().values()) 
 		{
-		map = getMonatsZeilen().get(date);
-			for (CSV01Zeile zeile : map.values()) 
+			for (CSV01Zeile zeile : mz.getZeilen().values()) 
 			{
 				if (zeile.getIsnew()) 
 				{
@@ -257,7 +314,7 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 				vorhanden++;	
 				}
 			}
-		result = result + Datumsformate.DF_MONATJAHR.format(date) + " ( " + vorhanden + " vorhanden, " + verfuegbar + " verfügbar ) | ";
+		result = result + Datumsformate.DF_MONATJAHR.format(mz.getBerichtsMonat()) + " ( " + vorhanden + " vorhanden, " + verfuegbar + " verfügbar ) | ";
 		vorhanden = 0;
 		verfuegbar = 0;
 		}
@@ -265,12 +322,29 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 	return StringUtility.removeLast2Char(result);	
 	}
 	
+	public boolean getMonatsZeilenOK(String monatImQuartal)
+	{
+	LocalDate key = getBerichtsZeitraum().getAuswertungsQuartal().getBerichtsMonate().get(Integer.parseInt(monatImQuartal));	
+	return getMonatsZeilen().get(key).isOK();	
+	}	
+
+	public String getAnzahlMonatsZeilen(String monatImQuartal)
+	{
+	LocalDate key = getBerichtsZeitraum().getAuswertungsQuartal().getBerichtsMonate().get(Integer.parseInt(monatImQuartal));	
+	return String.valueOf(getMonatsZeilen().get(key).getZeilen().size());	
+	}
+	
+	public String getFormattedBerichtsmonat(String monatImQuartal)
+	{
+	return Datumsformate.DF_MONATJAHR.format(getBerichtsZeitraum().getAuswertungsQuartal().getBerichtsMonate().get(Integer.parseInt(monatImQuartal)));	
+	}
+	
 	public String getBerichtsmonatInfo()
 	{
 	String result = "";
 		for (LocalDate date : getMonatsZeilen().keySet()) 
 		{
-		result = result + Datumsformate.DF_MONATJAHR.format(date) + " (" + getMonatsZeilen().get(date).size() + " Datensätze) | ";	
+		result = result + Datumsformate.DF_MONATJAHR.format(date) + " (" + getMonatsZeilen().get(date).getZeilen().size() + " Datensätze) | ";	
 		}	
 	return result;	
 	}
@@ -323,7 +397,7 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 				}	
 					try 
 					{
-					monatsZeilen.get(zeile.getBerichtmonat()).put(lineCount, zeile);	
+					monatsZeilen.get(zeile.getBerichtmonat()).add(zeile);	
 					} 
 					catch (NullPointerException e) 
 					{
@@ -349,7 +423,7 @@ private TreeMap<LocalDate, TreeMap<Integer, CSV01Zeile>> monatsZeilen = null;;
 					}
 					try 
 					{
-					monatsZeilen.get(zeile.getBerichtmonat()).put(lineCount, zeile);	
+					monatsZeilen.get(zeile.getBerichtmonat()).add(zeile);	
 					} 
 					catch (NullPointerException e) 
 					{

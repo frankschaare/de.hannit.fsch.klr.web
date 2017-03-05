@@ -19,6 +19,10 @@
 			    <f:facet name="header">
 					<h:outputText value="#{createCSV01.csvDatei.dataTableHeader}" />				   
 				 </f:facet>
+				 
+			    <p:column headerText="Index" style="text-align: center;">
+			        <h:outputText value="#{zeile.index}" />
+			    </p:column>
 			 
 			    <p:column headerText="#{ui['csv01TableColumn1']}" style="text-align: center;">
 			        <h:outputText value="#{zeile.getWert(1)}" />

@@ -56,10 +56,7 @@ private MonatsSummen monatsSummen = null;
 	public void monatsSummenChanged(MonatsSummen incoming) 
 	{
 	setMonatsSummen(incoming);
-		if (csv01 == null) 
-		{
-		setCsv01();	
-		} 
+	setCsv01();	
 	}
 	
 	public CSV01Datei getCsv01() {return csv01;}

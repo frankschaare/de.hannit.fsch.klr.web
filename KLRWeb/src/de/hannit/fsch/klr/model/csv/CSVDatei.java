@@ -178,7 +178,7 @@ protected int lineCount = -1;
 		}
 	}	
 
-	public void append() 
+	public boolean append() 
 	{
 		if (!Files.exists(this.toPath(), new LinkOption[]{LinkOption.NOFOLLOW_LINKS}))
 		{
@@ -196,7 +196,8 @@ protected int lineCount = -1;
 			//log.error("Fehler beim Ergänzen der Datei " + this.toPath(), this.getClass().getName() + ".write()", e);	
 			e.printStackTrace();
 			}	
-		}		
+		}
+	return false;		
 	}	
 	
 	public boolean write() 

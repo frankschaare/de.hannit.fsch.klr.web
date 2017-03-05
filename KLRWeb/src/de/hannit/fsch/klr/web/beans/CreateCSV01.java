@@ -74,7 +74,6 @@ private int zeilenHinzugefuegt = 0;
 		log.log(Level.SEVERE, logPrefix + detail);		
 		msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Monatssummen sind fehlerhaft !", detail);
 		fc.addMessage(null, msg);			
-		setBtnDownloadDisabled(true);
 		setBtnAktualisierenDisabled(true);
 		setBtnSpeichernDisabled(true);
 		}
@@ -100,12 +99,27 @@ private int zeilenHinzugefuegt = 0;
 		} 
 		else 
 		{
-
+		//TODO	
 		}
 		
 	}
 
-
+	public void append()
+	{
+		if (csvDatei.append()) 
+		{
+		setBtnDownloadDisabled(true);
+		setBtnAktualisierenDisabled(true);
+		setBtnSpeichernDisabled(true);		
+		menuBar.setCsv01();
+		createCSV();
+		} 
+		else 
+		{
+		//TODO
+		}
+		
+	}
 	
 	/*
 	 * Erstellt alle Zeilen der Datei und schreibt diese
@@ -161,15 +175,18 @@ private int zeilenHinzugefuegt = 0;
 		fc.addMessage(null, msg);			} 
 		else 
 		{
-			if (csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).get(zeile.getIndex()) != null) 
+			if (csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).contains(zeile)) 
 			{
-			detail = "Die gespeicherte CSV01-Datei enthält bereits eine Zeile mit dem Index " + zeile.getIndex() + " für den Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + ". Die Zeile wurde nicht hinzugefügt !";
-			log.log(Level.SEVERE, logPrefix + detail);
-			zeilenVorhanden++;
+				if (zeile.getIsnew()) 
+				{
+				detail = "Die gespeicherte CSV01-Datei enthält bereits eine Zeile mit dem Index " + zeile.getIndex() + " für den Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + ". Die Zeile wurde nicht hinzugefügt !";
+				log.log(Level.SEVERE, logPrefix + detail);
+				zeilenVorhanden++;
+				}
 			} 
 			else 
 			{
-			csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).put(zeile.getIndex(), zeile);	
+			csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).add(zeile);	
 			detail = "Zeile " + zeile.getIndex() + " erfolgreich für den Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + " hinzugefügt.";
 			log.log(Level.INFO, logPrefix + detail);
 			zeilenHinzugefuegt++;
@@ -220,7 +237,7 @@ private int zeilenHinzugefuegt = 0;
 			fc.addMessage(null, msg);			} 
 			else 
 			{
-				if (csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).get(zeile.getIndex()) != null) 
+				if (csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).contains(zeile)) 
 				{
 				detail = "Die gespeicherte CSV01-Datei enthält bereits eine Zeile mit dem Index " + zeile.getIndex() + " für den Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + ". Die Zeile wurde nicht hinzugefügt !";
 				log.log(Level.SEVERE, logPrefix + detail);
@@ -228,7 +245,7 @@ private int zeilenHinzugefuegt = 0;
 				} 
 				else 
 				{
-				csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).put(zeile.getIndex(), zeile);	
+				csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).add(zeile);	
 				detail = "Zeile " + zeile.getIndex() + " erfolgreich für den Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + " hinzugefügt.";
 				log.log(Level.INFO, logPrefix + detail);
 				zeilenHinzugefuegt++;
@@ -241,16 +258,16 @@ private int zeilenHinzugefuegt = 0;
 		switch (zeilenVorhanden) 
 		{
 		case 0: 
-		setBtnDownloadDisabled(false);
 		setBtnAktualisierenDisabled(true);
 		setBtnSpeichernDisabled(false);
 		break;
 		
 		default:
-		detail = "Die gespeicherte CSV01-Datei enthält bereits " + zeilenVorhanden + " Zeilen mit dem Index " + zeile.getIndex() + " für den Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + ". Die Zeilen wurde nicht hinzugefügt !";
+		detail = "Die gespeicherte CSV01-Datei enthält bereits " + zeilenVorhanden + " Zeilen für den Auswertungsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + ". Die Zeilen wurde nicht hinzugefügt !";
 		log.log(Level.WARNING, logPrefix + detail);		
 		msg = new FacesMessage(FacesMessage.SEVERITY_WARN, zeilenVorhanden + " Zeilen übersprungen !", detail);
-		fc.addMessage(null, msg);		
+		fc.addMessage(null, msg);
+		boolean test = csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).isOK();
 		break;
 		}
 		
@@ -272,9 +289,26 @@ private int zeilenHinzugefuegt = 0;
 		log.log(Level.INFO, logPrefix + detail);		
 		msg = new FacesMessage(FacesMessage.SEVERITY_INFO, zeilenHinzugefuegt + " Zeilen erfolgreich hinzugefügt.", detail);
 		fc.addMessage(null, msg);		
-		setBtnDownloadDisabled(true);
-		setBtnAktualisierenDisabled(true);
-		setBtnSpeichernDisabled(false);
+
+			switch (csvDatei.getEmptyMonatsMaps()) 
+			{
+			case 1:
+			setBtnAktualisierenDisabled(false);
+			setBtnSpeichernDisabled(true);
+			setBtnDownloadDisabled(true);
+			break;
+			case 2:
+			setBtnAktualisierenDisabled(true);
+			setBtnSpeichernDisabled(false);
+			setBtnDownloadDisabled(true);
+			break;			
+			default:
+			setBtnAktualisierenDisabled(true);
+			setBtnSpeichernDisabled(true);
+			setBtnDownloadDisabled(false);
+			break;
+			}
+		
 		break;
 		}
 		

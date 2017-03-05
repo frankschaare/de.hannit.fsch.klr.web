@@ -11,12 +11,49 @@
 		<p:panelGrid id="benutzerErfassenGrid" style="width: 100%; border-collapse: separate;">
 			<f:facet name="header">
 				<p:row>
-					<p:column colspan="7"><p:outputLabel id="gridHeaderText" value="HeaderText"/></p:column>
+					<p:column colspan="7"><p:outputLabel id="gridHeaderText" value="#{createCSV01.csvDatei.berichtsZeitraum.auswertungsQuartal.bezeichnungLang}"/></p:column>
 				</p:row>				    
 		    </f:facet>
+		    
 			 	<p:row>
 			 		<p:column>
-			 			<p:commandButton id="btnAktualisieren" value="ergänzen" disabled="#{createCSV01.btnAktualisierenDisabled}"  icon="menuCSVAddLines"/>
+					    <h:outputText value="#{createCSV01.csvDatei.getFormattedBerichtsmonat(1)}" styleClass="benutzerErfassenLabel"/>
+			 		</p:column>
+			 		<p:column>
+					    <h:outputText value="#{createCSV01.csvDatei.getAnzahlMonatsZeilen(1)} Datensätze"/>
+			 		</p:column>
+			 		<p:column style="width: 40%; padding: 30px 0px;">
+			 			<h:graphicImage value="#{resource['/images/error16x16.png']}" rendered="#{createCSV01.csvDatei.getMonatsZeilenOK(1) eq false}"/>
+					    <h:graphicImage value="#{resource['/images/checked16x16.png']}" rendered="#{createCSV01.csvDatei.getMonatsZeilenOK(1) eq true}"/>
+			 		</p:column>
+			 	</p:row>	
+			 	<p:row>
+			 		<p:column>
+					    <h:outputText value="#{createCSV01.csvDatei.getFormattedBerichtsmonat(2)}" styleClass="benutzerErfassenLabel"/>
+			 		</p:column>
+			 		<p:column>
+					    <h:outputText value="#{createCSV01.csvDatei.getAnzahlMonatsZeilen(2)} Datensätze"/>
+			 		</p:column>
+			 		<p:column style="width: 40%; padding: 30px 0px;">
+			 			<h:graphicImage value="#{resource['/images/error16x16.png']}" rendered="#{createCSV01.csvDatei.getMonatsZeilenOK(2) eq false}"/>
+					    <h:graphicImage value="#{resource['/images/checked16x16.png']}" rendered="#{createCSV01.csvDatei.getMonatsZeilenOK(2) eq true}"/>
+			 		</p:column>
+			 	</p:row>
+			 	<p:row>
+			 		<p:column>
+					    <h:outputText value="#{createCSV01.csvDatei.getFormattedBerichtsmonat(3)}" styleClass="benutzerErfassenLabel"/>
+			 		</p:column>
+			 		<p:column>
+					    <h:outputText value="#{createCSV01.csvDatei.getAnzahlMonatsZeilen(3)} Datensätze"/>
+			 		</p:column>
+			 		<p:column style="width: 40%; padding: 30px 0px;">
+			 			<h:graphicImage value="#{resource['/images/error16x16.png']}" rendered="#{createCSV01.csvDatei.getMonatsZeilenOK(3) eq false}"/>
+					    <h:graphicImage value="#{resource['/images/checked16x16.png']}" rendered="#{createCSV01.csvDatei.getMonatsZeilenOK(3) eq true}"/>
+			 		</p:column>
+			 	</p:row>			 	
+			 	<p:row>
+			 		<p:column>
+			 			<p:commandButton id="btnAktualisieren" value="ergänzen" actionListener="#{createCSV01.append}" process="@this" update="@(form) labelDateiInfo dataTableCSV01Neu msgs" disabled="#{createCSV01.btnAktualisierenDisabled}"  icon="menuCSVAddLines"/>
 			 		</p:column>
 			 		<p:column>
 					 	<p:commandButton id="btnSpeichern" value="speichern" actionListener="#{createCSV01.write}" process="@this" update="@(form) labelDateiInfo dataTableCSV01Neu msgs" disabled="#{createCSV01.btnSpeichernDisabled}" icon="fa fa-save"/>		 		
