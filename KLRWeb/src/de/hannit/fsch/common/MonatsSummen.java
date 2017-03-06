@@ -35,6 +35,8 @@ private boolean isChecked = false;
 private boolean summeOK = false;
 
 private Date berichtsMonat = null;
+private String monatsNummer = null;
+
 /**
 	 * 
 	 */
@@ -107,6 +109,7 @@ private Date berichtsMonat = null;
 	public void setBerichtsMonat(Date berichtsMonat)
 	{
 	this.berichtsMonat = berichtsMonat;
+	setMonatsNummer(getBerichtsMonatAsLocalDate());
 	}
 
 	/*
@@ -184,5 +187,32 @@ private Date berichtsMonat = null;
 	public String getFormattedKTRMonatssumme()
 	{
 	return "Kostenträger (" + NumberFormat.getCurrencyInstance().format(getKTRMonatssumme()) + ")";
+	}
+
+	public String getMonatsNummer() {return monatsNummer;}
+
+	public void setMonatsNummer(LocalDate toCheck) 
+	{
+	String mNummer = null;
+	
+		switch (toCheck.getMonthValue())
+		{
+		case 1: mNummer = "01"; break;
+		case 2: mNummer = "02"; break;		
+		case 3: mNummer = "03"; break;
+		case 4: mNummer = "01"; break;
+		case 5: mNummer = "02";	break;		
+		case 6: mNummer = "03";	break;
+		case 7: mNummer = "01"; break;
+		case 8: mNummer = "02";	break;		
+		case 9: mNummer = "03";	break;
+		case 10:mNummer = "01";	break;
+		case 11:mNummer = "02";	break;		
+		case 12:mNummer = "03";	break;
+		default:mNummer = null;	break;
+		}
+	this.monatsNummer = mNummer;
 	}		
+	
+	
 }
