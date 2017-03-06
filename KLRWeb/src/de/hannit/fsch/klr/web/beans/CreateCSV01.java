@@ -91,11 +91,10 @@ private int zeilenHinzugefuegt = 0;
 	{
 		if (csvDatei.write()) 
 		{
-		setBtnDownloadDisabled(true);
-		setBtnAktualisierenDisabled(true);
-		setBtnSpeichernDisabled(true);		
 		menuBar.setCsv01();
 		createCSV();
+		setBtnAktualisierenDisabled(csvDatei.getAnzahlBerichtsMonateinDatei() < 3 ? false : true);
+		setBtnSpeichernDisabled(true);		
 		} 
 		else 
 		{
@@ -108,11 +107,10 @@ private int zeilenHinzugefuegt = 0;
 	{
 		if (csvDatei.append()) 
 		{
-		setBtnDownloadDisabled(true);
-		setBtnAktualisierenDisabled(true);
-		setBtnSpeichernDisabled(true);		
 		menuBar.setCsv01();
 		createCSV();
+		setBtnAktualisierenDisabled(csvDatei.getAnzahlBerichtsMonateinDatei() < 3 ? false : true);
+		setBtnSpeichernDisabled(true);		
 		} 
 		else 
 		{
@@ -258,7 +256,7 @@ private int zeilenHinzugefuegt = 0;
 		switch (zeilenVorhanden) 
 		{
 		case 0: 
-		setBtnAktualisierenDisabled(true);
+		setBtnAktualisierenDisabled(csvDatei.getAnzahlBerichtsMonateinDatei() < 3 ? false : true);
 		setBtnSpeichernDisabled(false);
 		break;
 		
@@ -267,7 +265,6 @@ private int zeilenHinzugefuegt = 0;
 		log.log(Level.WARNING, logPrefix + detail);		
 		msg = new FacesMessage(FacesMessage.SEVERITY_WARN, zeilenVorhanden + " Zeilen übersprungen !", detail);
 		fc.addMessage(null, msg);
-		boolean test = csvDatei.getMonatsZeilen().get(zeile.getBerichtmonat()).isOK();
 		break;
 		}
 		
@@ -279,7 +276,6 @@ private int zeilenHinzugefuegt = 0;
 		msg = new FacesMessage(FacesMessage.SEVERITY_WARN, zeilenVorhanden + " Zeilen übersprungen !", detail);
 		fc.addMessage(null, msg);		
 
-		setBtnDownloadDisabled(false);
 		setBtnAktualisierenDisabled(true);
 		setBtnSpeichernDisabled(true);
 		break;
@@ -295,17 +291,14 @@ private int zeilenHinzugefuegt = 0;
 			case 1:
 			setBtnAktualisierenDisabled(false);
 			setBtnSpeichernDisabled(true);
-			setBtnDownloadDisabled(true);
 			break;
 			case 2:
 			setBtnAktualisierenDisabled(true);
 			setBtnSpeichernDisabled(false);
-			setBtnDownloadDisabled(true);
 			break;			
 			default:
-			setBtnAktualisierenDisabled(true);
+			setBtnAktualisierenDisabled(csvDatei.getAnzahlBerichtsMonateinDatei() < 3 ? false : true);
 			setBtnSpeichernDisabled(true);
-			setBtnDownloadDisabled(false);
 			break;
 			}
 		
@@ -392,9 +385,15 @@ private int zeilenHinzugefuegt = 0;
 	public void setBtnAktualisierenDisabled(boolean btnAktualisierenDisabled) {this.btnAktualisierenDisabled = btnAktualisierenDisabled;}
 	public boolean getBtnSpeichernDisabled() {return btnSpeichernDisabled;}
 	public void setBtnSpeichernDisabled(boolean btnSpeichernDisabled) {this.btnSpeichernDisabled = btnSpeichernDisabled;}
-	public boolean getBtnDownloadDisabled() {return btnDownloadDisabled;}
-	public void setBtnDownloadDisabled(boolean toSet) {this.btnDownloadDisabled = toSet;
+	public boolean getBtnDownloadDisabled() 
+	{
+	btnDownloadDisabled = true;
+		
+		if (csvDatei.getAnzahlBerichtsMonateinDatei() == 3 && csvDatei.getMonatsZeilenOK("1") && csvDatei.getMonatsZeilenOK("2") && csvDatei.getMonatsZeilenOK("3")) 
+		{
+		btnDownloadDisabled = false;		
+		}
+	return btnDownloadDisabled;
 	}
-	
 	
 }

@@ -63,10 +63,20 @@ private MonatsSummen monatsSummen = null;
 
 	public void setCsv01() 
 	{
+	Zeitraum berichtsZeitraum = new Zeitraum(monatsSummen.getBerichtsMonatAsLocalDate());
 	csv01 = new CSV01Datei(getDownloadPath());
-	csv01.setBerichtsZeitraum(new Zeitraum(monatsSummen.getBerichtsMonatAsLocalDate()));
-	csv01.hasHeader(false);
-	csv01.read();
+	
+		if (csv01.existsZielDatei()) 
+		{
+		csv01.hasHeader(false);
+		csv01.read();
+		} 
+		else 
+		{	
+		csv01.setBerichtsZeitraum(berichtsZeitraum);
+		csv01.hasHeader(false);
+		csv01.read();				
+		}
 	}
 
 	@Override

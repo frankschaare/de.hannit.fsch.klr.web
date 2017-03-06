@@ -83,6 +83,18 @@ private int typ = 0;
 	endDatum = getAuswertungsQuartal().getEndDatum();
 	}
 	
+	public boolean equals(Zeitraum toCheck)
+	{
+	boolean result = false;
+	
+		if (getStartDatum().equals(toCheck.getStartDatum()) && getEndDatum().equals(toCheck.getEndDatum())) 
+		{
+		result = true;	
+		}
+	
+	return result;
+	}
+	
 	
 	/*
 	 * Berechnet die enthaltenen Quartale und liegt diese in der TreeMap ab.

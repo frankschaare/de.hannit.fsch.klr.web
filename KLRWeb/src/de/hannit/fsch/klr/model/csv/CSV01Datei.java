@@ -59,6 +59,7 @@ private CSVFeld constFeld4Neme = null;
 private CSVFeld constFeld4Gebe = null;
 private Charset charset = Charset.forName("ISO-8859-1");
 private List<String> lines = null;
+private int anzahlBerichtsMonateinDatei = 0;
 
 /**
  * Die CSV01-Datei wird für ein komplettes Quartal erstellt.
@@ -180,7 +181,8 @@ private TreeMap<LocalDate, MonatsCSV01Zeilen> monatsZeilen = null;
 			log.log(Level.INFO, logPrefix + detail);
 			msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Datei erfolgreich ergänzt.", detail);
 			fc.addMessage(null, msg);
-
+			String toSet = "Datei " + getPath() + " ist bereits für das " + getBerichtsZeitraum().getAuswertungsQuartal().getBezeichnungLang() + " vorhanden.";
+			setDateiInfo(toSet);
 			success = true;
 			}
 			catch (IOException e)
@@ -264,6 +266,8 @@ private TreeMap<LocalDate, MonatsCSV01Zeilen> monatsZeilen = null;
 	@Override
 	public void read() 
 	{
+	String[] fieldArray = null;
+		
 		/*
 		 * Existiert die Zieldatei bereits, werden die vorhandenen Zeilen eingelesen.
 		 * Diese werden später im Part ausgegraut dargestellt. 
@@ -271,6 +275,30 @@ private TreeMap<LocalDate, MonatsCSV01Zeilen> monatsZeilen = null;
 		if (existsZielDatei())
 		{
 		setDateiVorhanden(true);	
+		ArrayList<LocalDate> vorhandeneMonate = new ArrayList<>();
+		LocalDate tmp = null;
+		
+			try 
+			{
+			lines = Files.readAllLines(Paths.get(super.getPath()), charset);
+			
+				for (String line : lines) 
+				{
+				fieldArray = line.split(delimiter);	
+				tmp = LocalDate.parse(fieldArray[0], Datumsformate.df);
+					if (! vorhandeneMonate.contains(tmp)) 
+					{
+					vorhandeneMonate.add(tmp);	
+					}
+				}
+			setBerichtsZeitraum(new Zeitraum(vorhandeneMonate.get(0)));
+			setAnzahlBerichtsMonateinDatei(vorhandeneMonate.size());
+			} 
+			catch (IOException e) 
+			{
+			e.printStackTrace();
+			}
+
 		createCSVModel();	
 		String toSet = "Datei " + getPath() + " ist bereits für das " + getBerichtsZeitraum().getAuswertungsQuartal().getBezeichnungLang() + " vorhanden.";
 		setDateiInfo(toSet);
@@ -358,89 +386,84 @@ private TreeMap<LocalDate, MonatsCSV01Zeilen> monatsZeilen = null;
 	String[] fieldArray = null;
 	
 	lineCount = 1;
-		try 
+		for (String line : lines)
 		{
-		lines = Files.readAllLines(Paths.get(super.getPath()), charset);
-		
-			for (String line : lines)
+		switch (lineCount) 
+		{
+		// Erste Zeile wird nur verarbeitet wenn keine Kopfzeile vorhanden ist
+		case 0:
+		fieldArray = line.split(delimiter); 	
+		zeile = new CSV01Zeile();
+		zeile.setIsnew(false);
+			if (!hasHeader) 
 			{
-			switch (lineCount) 
+				for (int i = 0; i < fieldArray.length; i++) 
+				{
+				feld = new CSVFeld();
+					if (i == 0) {feld.setBerichtsMonat(fieldArray[i]);}
+				feld.setHeader(false);
+				feld.setWert(fieldArray[i]);
+				feld.setIndex((i+1));
+				zeile.addFeld(feld);
+				}
+			}
+			else 
 			{
-			// Erste Zeile wird nur verarbeitet wenn keine Kopfzeile vorhanden ist
-			case 0:
+				for (int i = 0; i < fieldArray.length; i++) 
+				{
+				feld = new CSVFeld();
+					if (i == 0) {feld.setBerichtsMonat(fieldArray[i]);}
+				feld.setHeader(true);
+				feld.setHeaderText(fieldArray[i]);
+				feld.setIndex((i+1));
+				zeile.addFeld(feld);					
+				}
+			}	
+				try 
+				{
+				monatsZeilen.get(zeile.getBerichtmonat()).add(zeile);	
+				} 
+				catch (NullPointerException e) 
+				{
+				detail = "Es wurde versucht, eine Zeile für den Berichtsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + " einzufügen, für die es keinen gültigen Berichtsmonat gibt.";
+				log.log(Level.SEVERE, logPrefix + detail);	
+				msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Einlesen der vorhandenen Daten !", detail);
+				FacesContext.getCurrentInstance().addMessage(null, msg);					
+				}
+			break;
+
+			default:
 			fieldArray = line.split(delimiter); 	
 			zeile = new CSV01Zeile();
 			zeile.setIsnew(false);
-				if (!hasHeader) 
+
+				for (int i = 0; i < fieldArray.length; i++) 
 				{
-					for (int i = 0; i < fieldArray.length; i++) 
-					{
-					feld = new CSVFeld();
-						if (i == 0) {feld.setBerichtsMonat(fieldArray[i]);}
-					feld.setHeader(false);
-					feld.setWert(fieldArray[i]);
-					feld.setIndex((i+1));
-					zeile.addFeld(feld);
-					}
+				feld = new CSVFeld();
+				feld.setHeader(false);
+				feld.setWert(fieldArray[i]);
+				feld.setIndex((i+1));
+				zeile.addFeld(feld);
 				}
-				else 
+				try 
 				{
-					for (int i = 0; i < fieldArray.length; i++) 
-					{
-					feld = new CSVFeld();
-						if (i == 0) {feld.setBerichtsMonat(fieldArray[i]);}
-					feld.setHeader(true);
-					feld.setHeaderText(fieldArray[i]);
-					feld.setIndex((i+1));
-					zeile.addFeld(feld);					
-					}
-				}	
-					try 
-					{
-					monatsZeilen.get(zeile.getBerichtmonat()).add(zeile);	
-					} 
-					catch (NullPointerException e) 
-					{
-					detail = "Es wurde versucht, eine Zeile für den Berichtsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + " einzufügen, für die es keinen gültigen Berichtsmonat gibt.";
-					log.log(Level.SEVERE, logPrefix + detail);	
-					msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Einlesen der vorhandenen Daten !", detail);
-					FacesContext.getCurrentInstance().addMessage(null, msg);					
-					}
-				break;
-
-				default:
-				fieldArray = line.split(delimiter); 	
-				zeile = new CSV01Zeile();
-				zeile.setIsnew(false);
-
-					for (int i = 0; i < fieldArray.length; i++) 
-					{
-					feld = new CSVFeld();
-					feld.setHeader(false);
-					feld.setWert(fieldArray[i]);
-					feld.setIndex((i+1));
-					zeile.addFeld(feld);
-					}
-					try 
-					{
-					monatsZeilen.get(zeile.getBerichtmonat()).add(zeile);	
-					} 
-					catch (NullPointerException e) 
-					{
-					detail = "Es wurde versucht, eine Zeile für den Berichtsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + " einzufügen, für die es keinen gültigen Berichtsmonat gibt.";
-					log.log(Level.SEVERE, logPrefix + detail);	
-					msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Einlesen der vorhandenen Daten !", detail);
-					FacesContext.getCurrentInstance().addMessage(null, msg);					
-					}
-				break;
-				}	
-				lineCount++;
-				}	
-			} 
-			catch (IOException e) 
-			{
-			e.printStackTrace();	
+				monatsZeilen.get(zeile.getBerichtmonat()).add(zeile);	
+				} 
+				catch (NullPointerException e) 
+				{
+				detail = "Es wurde versucht, eine Zeile für den Berichtsmonat " + Datumsformate.DF_MONATJAHR.format(zeile.getBerichtmonat()) + " einzufügen, für die es keinen gültigen Berichtsmonat gibt.";
+				log.log(Level.SEVERE, logPrefix + detail);	
+				msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler beim Einlesen der vorhandenen Daten !", detail);
+				FacesContext.getCurrentInstance().addMessage(null, msg);					
+				}
+			break;
+			}	
+			lineCount++;
 			}
 	}
 
+	public int getAnzahlBerichtsMonateinDatei() {return anzahlBerichtsMonateinDatei;}
+	public void setAnzahlBerichtsMonateinDatei(int anzahlBerichtsMonateinDatei) {this.anzahlBerichtsMonateinDatei = anzahlBerichtsMonateinDatei;}
+
+	
 }
