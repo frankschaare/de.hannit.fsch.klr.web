@@ -110,6 +110,8 @@ private Mitarbeiter toChange = null;
     
 	public void save()
 	{
+   	logPrefix = this.getClass().getName() + ".save(): ";
+		
 	SQLException e = dataService.setLoGaDaten(logaDatei.getDaten());
 	fc = FacesContext.getCurrentInstance();
 	
@@ -121,9 +123,10 @@ private Mitarbeiter toChange = null;
 		} 
 		else 
 		{
-		detail = "LoGa Daten wurden erfolgreich in der Datenbank gespeichert.";
+		detail = logPrefix + " LoGa Daten wurden erfolgreich in der Datenbank gespeichert.";
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Erfolgreich gepeichert !", detail);
 		fc.addMessage(null, message);	
+		dataService.setMaxDate(dataService.getMaxLoGaDate());
 		reset();
 		}			
 	}

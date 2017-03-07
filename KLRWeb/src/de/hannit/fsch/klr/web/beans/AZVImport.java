@@ -66,7 +66,6 @@ private IAZVClient webService = null;
 private String connectionInfo = "Nicht verbunden";
 private AZVDaten azvDaten = null;
 private ArrayList<AZVDatensatz> azvMeldungen = null;
-private ArrayList<LocalDate> azvBerichtsMonate = null;
 private LocalDate maxAZVDate = null;
 private LocalDate requestAZVDate = null;
 private Date selectedDate = null;
@@ -134,19 +133,8 @@ private XPath xpath = xpathfactory.newXPath();
 	private void setMaxBerichtsmonat() 
 	{
 	logPrefix = this.getClass().getName() + "setMaxBerichtsmonat(): ";
-	this.azvBerichtsMonate = dataService.getAzvBerichtsMonate();
-					
-		for (LocalDate localDate : azvBerichtsMonate) 
-		{
-			if (maxAZVDate == null)
-			{
-			maxAZVDate = localDate;	
-			}
-			else
-			{
-			maxAZVDate = localDate.isAfter(maxAZVDate) ? localDate : maxAZVDate;	
-			}	
-		}
+
+	maxAZVDate = dataService.getMaxAZVDate();
 	if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "in der Datenbank wurden AZV Daten bis " + Datumsformate.DF_MONATJAHR.format(maxAZVDate) + " gefunden");}	
 	
 	setSelectedDate(DateUtility.asDate(maxAZVDate.plusMonths(1)));	
@@ -158,7 +146,7 @@ private XPath xpath = xpathfactory.newXPath();
 	setAnzahlDaten(0);
 	azvDaten = new AZVDaten();
 	azvDaten.setBerichtsMonat(DateUtility.asLocalDate(getSelectedDate()));
-	daten = new ListDataModel<AZVDatensatz>();
+	daten = new ListDataModel<AZVDatensatz>(new ArrayList<AZVDatensatz>());
 	setBtnAZVAnfrageDisbled(false);
 	setBtnAZVResetDisabled(true);
 	setBtnAZVSpeichernDisbled(true);
@@ -185,7 +173,7 @@ private XPath xpath = xpathfactory.newXPath();
 	
     public void onRowSelect(SelectEvent event) 
     {
-    AZVDatensatz row =  (AZVDatensatz) event.getObject();
+    //AZVDatensatz row =  (AZVDatensatz) event.getObject();
     //RequestContext.getCurrentInstance().execute("updateButtons();");
     }
 	

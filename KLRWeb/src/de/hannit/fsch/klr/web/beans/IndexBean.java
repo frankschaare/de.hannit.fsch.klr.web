@@ -12,7 +12,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.ProjectStage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
@@ -36,7 +36,7 @@ import de.hannit.fsch.klr.model.team.Team;
 import de.hannit.fsch.util.DateUtility;
 
 @ManagedBean
-@SessionScoped
+@RequestScoped
 public class IndexBean implements Serializable
 {
 private static final long serialVersionUID = 4726044687673797206L;
@@ -85,7 +85,7 @@ private double vzaeTotal = 0;
 	indexSelectOneController = indexSelectOneController != null ? indexSelectOneController : fc.getApplication().evaluateExpressionGet(fc, "#{indexSelectOneController}", IndexSelectOneController.class);
 
 	hannit = new Organisation();
-	loadData(DateUtility.asDate(indexSelectOneController.getMaxDate()));
+	loadData(DateUtility.asDate(dataService.getMaxLoGaDate()));
 	gesamt = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKosten().values()));
 	gesamtKTR = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostentraeger().values()));
 	gesamtKST = new ListDataModel<Kostenrechnungsobjekt>(new ArrayList<Kostenrechnungsobjekt>(mSumme.getGesamtKostenstellen().values()));

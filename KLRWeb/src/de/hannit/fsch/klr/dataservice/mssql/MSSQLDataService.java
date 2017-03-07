@@ -79,9 +79,6 @@ private ArrayList<Mitarbeiter> mitarbeiter = null;
 private ArrayList<LocalDate> azvBerichtsMonate = null;	
 private ArrayList<LocalDate> logaBerichtsMonate = null;
 private LocalDate maxDate = null;	
-private LocalDate maxAZVDate = null;	
-private LocalDate maxLoGaDate = null;
-
 private Organisation hannit = null;
 
 
@@ -105,60 +102,8 @@ private Organisation hannit = null;
 			this.info = "Benutzer " + dbmd.getUserName();
 			this.info += " verbunden mit " + dbmd.getDatabaseProductName() + " (" + dbmd.getDatabaseProductVersion() + ")";
 			this.info += " - " + dbmd.getDriverName() + " (" + dbmd.getDriverVersion() + ")";
-			
-			azvBerichtsMonate = new ArrayList<>();
-			ps = con.prepareStatement(PreparedStatements.SELECT_ARBEITSZEITANTEILE_BERICHTSMONATE);
-			rs = ps.executeQuery();
-			
-		      while (rs.next()) 
-		      {
-		      azvBerichtsMonate.add(rs.getDate(1).toLocalDate()); 	  
-		      }
-		    log.log(Level.INFO, "Verbindung zur KLR-Datenbank hergestellt. Es liegen AZV-Meldungen für " + azvBerichtsMonate.size() + " Berichtsmonate vor.");
-		    
-				for (LocalDate localDate : azvBerichtsMonate) 
-				{
-					if (maxAZVDate == null)
-					{
-					maxAZVDate = localDate;	
-					}
-					else
-					{
-					maxAZVDate = localDate.isAfter(maxAZVDate) ? localDate : maxAZVDate;	
-					}	
-				}		    
-		    
-			logaBerichtsMonate = new ArrayList<>();
-			ps = con.prepareStatement(PreparedStatements.SELECT_LOGA_BERICHTSMONATE);
-			subSelect = ps.executeQuery();
-			
-			   while (subSelect.next()) 
-			   {
-			   logaBerichtsMonate.add(subSelect.getDate(1).toLocalDate()); 	  
-			   }		    
-		    log.log(Level.INFO, "Es liegen LoGa Daten für " + logaBerichtsMonate.size() + " Berichtsmonate vor.");
-		    
-			for (LocalDate localDate : logaBerichtsMonate) 
-			{
-				if (maxLoGaDate == null)
-				{
-				maxLoGaDate = localDate;	
-				}
-				else
-				{
-				maxLoGaDate = localDate.isAfter(maxLoGaDate) ? localDate : maxLoGaDate;	
-				}		
-			}
-			if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "in der Datenbank wurden LoGa Daten bis " + Datumsformate.DF_MONATJAHR.format(maxLoGaDate) + " gefunden");}			    
-		    
-			if (maxLoGaDate.isBefore(maxAZVDate) || maxLoGaDate.isEqual(maxAZVDate)) 
-			{
-			maxDate = maxAZVDate;	
-			} 
-			else 
-			{
-			maxDate = maxLoGaDate;	
-			}
+
+			setMaxDate(getMaxLoGaDate());
 			hannit = new Organisation();
 			hannit.setMitarbeiter(getAZVMonat(DateUtility.asDate(maxDate)));
 			if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Mitarbeiterliste enthält " + hannit.getMitarbeiterNachPNR().size() + " Mitarbeiter");}	
@@ -180,7 +125,65 @@ private Organisation hannit = null;
 		}
 	}
 
+	public LocalDate getMaxAZVDate() 
+	{
+	LocalDate result = null;	
+		try 
+		{
+		ps = con.prepareStatement(PreparedStatements.SELECT_MAX_ARBEITSZEITANTEILE_BERICHTSMONAT);
+		rs = ps.executeQuery();
+		
+	    while (rs.next()) 
+	    {
+	    result = (rs.getDate(1).toLocalDate());
+	    }
 	
+		} 
+		catch (SQLException exception) 
+		{
+		exception.printStackTrace();
+			try
+			{
+			con.rollback();
+			}
+			catch (SQLException e1)
+			{
+			e1.printStackTrace();
+			}
+		}	
+	return result;	
+	}
+	
+	
+	public LocalDate getMaxLoGaDate() 
+	{
+	LocalDate result = null;	
+		try 
+		{
+		ps = con.prepareStatement(PreparedStatements.SELECT_MAX_LOGA_BERICHTSMONAT);
+		rs = ps.executeQuery();
+		
+	    while (rs.next()) 
+	    {
+	    result = (rs.getDate(1).toLocalDate());
+	    }
+	
+		} 
+		catch (SQLException exception) 
+		{
+		exception.printStackTrace();
+			try
+			{
+			con.rollback();
+			}
+			catch (SQLException e1)
+			{
+			e1.printStackTrace();
+			}
+		}	
+	return result;
+	}
+
 	
 	@Override
 	public TreeMap<Integer, Mitarbeiter> getMitarbeiterOhneAZV() 
@@ -444,7 +447,8 @@ private Organisation hannit = null;
 			}
 		
 		con.commit();
-		con.setAutoCommit(true);	
+		con.setAutoCommit(true);
+		setMaxDate(getMaxLoGaDate());
 		} 
 		catch (SQLException exception) 
 		{
@@ -1310,11 +1314,16 @@ private Organisation hannit = null;
 	fc = FacesContext.getCurrentInstance();
 	
 	int personalNR = 0;	
+	Mitarbeiter toUpdate = new Mitarbeiter();
+	
 	TreeMap<Integer, String> result = new TreeMap<Integer, String>();
 	
 		// Versuch, PNR über Vor und Zuname zu ermitteln
 		if (azv.getVorname() != null && azv.getVorname().length() > 0) 
 		{
+		toUpdate.setNachname(azv.getNachname());
+		toUpdate.setVorname(azv.getVorname());
+	
 			try 
 			{
 			ps = con.prepareStatement(PreparedStatements.SELECT_PERSONALNUMMER_VORUNDZUNAME);
@@ -1336,6 +1345,21 @@ private Organisation hannit = null;
 					
 				case 1:
 				personalNR = result.firstKey();	
+				toUpdate.setPersonalNR(personalNR);
+					if (azv.getUserName() != null) 
+					{
+					toUpdate.setBenutzerName(azv.getUserName());
+					}
+
+				SQLException s = updateMitarbeiter(toUpdate);
+					if (s == null) 
+					{
+					if (fc.isProjectStage(ProjectStage.Development)) {log.log(Level.INFO, logPrefix + "Daten für Mitarbeiter " + azv.getVorname() + " " + azv.getNachname() + " wurden automatisch in der Datenbank aktualisiert.");}	
+					} 
+					else 
+					{
+					s.printStackTrace();	
+					}
 				break;
 					
 				default:
@@ -2145,12 +2169,8 @@ private Organisation hannit = null;
 	public ArrayList<LocalDate> getAzvBerichtsMonate() {return azvBerichtsMonate;}
 	public ArrayList<LocalDate> getLogaBerichtsMonate() {return logaBerichtsMonate;}
 	public LocalDate getMaxDate() {return maxDate;}
-	public LocalDate getMaxAZVDate() {return maxAZVDate;}
-	public LocalDate getMaxLoGaDate() {return maxLoGaDate;}
 	public Organisation getHannit() {return hannit;}
-	
-	
-	
+	public void setMaxDate(LocalDate maxDate) {this.maxDate = maxDate;}
 	
 }
 
